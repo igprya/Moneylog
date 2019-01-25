@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoneylogLib.Interfaces;
 using MoneylogLib.Models;
 
-namespace MoneylogLib
+namespace MoneylogLib.Filters
 {
     enum FilteringOption
     {
         Greater, GreaterOrEqual, Equal, Less, LessOrEqual, NotEqual
+    }
+
+    enum FilterChainingMode
+    {
+        And, Or
     }
     
     class TransactionFilter<T> : ITransactionFilter
@@ -17,15 +21,19 @@ namespace MoneylogLib
         private readonly T _filteringValue;
         private readonly FilteringOption _filteringOption;
         private readonly string _filteringPropertyName;
-        
-        public TransactionFilter(string filteringPropertyName, T filteringValue, FilteringOption filteringOption)
+
+        public FilterChainingMode ChainingMode { get; }
+
+        public TransactionFilter(string filteringPropertyName, T filteringValue, FilteringOption filteringOption, FilterChainingMode chainingMode)
         {
             _filteringPropertyName = filteringPropertyName;
             _filteringValue = filteringValue;
             _filteringOption = filteringOption;
+
+            ChainingMode = chainingMode;
         }
 
-        public IEnumerable<Transaction> Apply(IEnumerable<Transaction> transactions)
+        public List<Transaction> Apply(IEnumerable<Transaction> transactions)
         {
             var result = new List<Transaction>();
 
@@ -42,10 +50,7 @@ namespace MoneylogLib
 
         private T GetFilteringPropertyValue(ITransaction transaction)
         {
-            if (_filteringPropertyName == "Tags")
-                return (T) (object)string.Join(",", transaction.Tags);
-            
-            return (T) transaction?.GetType().GetProperty(_filteringPropertyName).GetValue(transaction, null);
+            return (T) transaction?.GetType().GetProperty(_filteringPropertyName)?.GetValue(transaction, null);
         }
 
         private bool Filter(T transactionProperty)
@@ -74,8 +79,11 @@ namespace MoneylogLib
 
         private bool FilterTags(T transactionProperty)
         {
-            string[] transactionTags = (transactionProperty as string).Split(',');
-            string[] filteringTags = (_filteringValue as string).Split(',');
+            string[] transactionTags = (transactionProperty as string)?.Split(',');
+            string[] filteringTags = (_filteringValue as string)?.Split(',');
+
+            if (transactionTags == null || filteringTags == null)
+                return false;
 
             bool tagsMatch = false;
 

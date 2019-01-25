@@ -191,17 +191,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Helpers\FilterQueryParser.cs" />
+    <Compile Include="src\Filters\FilterQueryParser.cs" />
+    <Compile Include="src\Filters\ITransactionFilter.cs" />
+    <Compile Include="src\Filters\TransactionFilter.cs" />
+    <Compile Include="src\Filters\FilterQueryExecutor.cs" />
     <Compile Include="src\Helpers\MoneylogSettings.cs" />
-    <Compile Include="src\Interfaces\ITransaction.cs" />
-    <Compile Include="src\Interfaces\ITransactionFilter.cs" />
-    <Compile Include="src\Interfaces\ITransactionStorageProvider.cs" />
+    <Compile Include="src\Models\ITransaction.cs" />
     <Compile Include="src\Models\Transaction.cs" />
     <Compile Include="src\Models\TransactionType.cs" />
     <Compile Include="src\Moneylog.cs" />
+    <Compile Include="src\StorageProviders\ITransactionStorageProvider.cs" />
     <Compile Include="src\StorageProviders\JsonTransactionStorageProvider.cs" />
     <Compile Include="src\TransactionController.cs" />
-    <Compile Include="src\TransactionFilter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

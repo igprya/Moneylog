@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using MoneylogLib.Interfaces;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Helpers
+namespace MoneylogLib.Filters
 {
-    static class FilterQueryParser
+    class FilterQueryParser
     {
         private static readonly Dictionary<string, Type> PropertyNameTypeMap = new Dictionary<string, Type>()
         {
@@ -19,24 +17,57 @@ namespace MoneylogLib.Helpers
             {"Tags", typeof(string)},
             {"CreatedTimestamp", typeof(DateTime)}
         };
+
+        public static List<ITransactionFilter> Parse(string filteringQuery)
+        {
+            var queries = GetQueriesFromInputString(filteringQuery);
+            var filters = new List<ITransactionFilter>();
+            
+            foreach (var query in queries)
+                filters.Add(CreateFilterFromQuery(query));
+
+            return filters;
+        }
         
-        public static ITransactionFilter CreateFilter(string filteringQuery)
+        private static ITransactionFilter CreateFilterFromQuery(string filteringQuery)
         {
             string[] queryElements = filteringQuery.Split(' ');
+           
+            if (queryElements.Length < 3 || queryElements.Length > 4)
+                throw new ArgumentException($"Invalid query: {filteringQuery} contains {queryElements.Length} elements; 3 or 4 elements were expected.");
 
-            string propertyName = queryElements[0];
-            string comparisonOperation = queryElements[1];
-            string targetValue = queryElements[2];
+            string chainingMode = "AND";
+            string propertyName;
+            string comparisonOperation;
+            string targetValue;
             
-            ValidateQueryElements(propertyName, comparisonOperation, targetValue);
+            if (queryElements[0].ToUpper() == "OR" || queryElements[0].ToUpper() == "AND")
+            {
+                chainingMode = queryElements[0].ToUpper();
+                propertyName = queryElements[1];
+                comparisonOperation = queryElements[2];
+                targetValue = queryElements[3];
+            }
+            else
+            {
+                propertyName = queryElements[0];
+                comparisonOperation = queryElements[1];
+                targetValue = queryElements[2];
+            }
 
-            return CreateFilter(propertyName, comparisonOperation, targetValue);
+            ValidateQueryElements(chainingMode, propertyName, comparisonOperation, targetValue);
+
+            return CreateFilter(chainingMode, propertyName, comparisonOperation, targetValue);
         }
 
-        private static void ValidateQueryElements(string propertyName, string comparisonOperation, string targetValue)
+        private static void ValidateQueryElements(string chainingMode, string propertyName, string comparisonOperation, string targetValue)
         {
+            string[] validChainingModes = new[] {"OR", "AND"};
             string[] validPropertyNames = new[] {"Id", "Timestamp", "Type", "Amount", "Note", "Tags", "CreatedTimestamp"};
             string[] validOperations = new[] {"<", "<=", "==", ">", ">=", "!="};
+            
+            if (!validChainingModes.Contains(chainingMode))
+                throw new ArgumentException($"{chainingMode} is not a valid filter chaining mode.");
             
             if (!validPropertyNames.Contains(propertyName))
                 throw new ArgumentException($"{propertyName} is not a valid Transaction property.");
@@ -71,8 +102,13 @@ namespace MoneylogLib.Helpers
                 throw new ArgumentException($"{targetValue} is not a valid target value for property {propertyName}.");
         }
 
-        private static ITransactionFilter CreateFilter(string propertyName, string comparisonOperation, string targetValue)
+        private static ITransactionFilter CreateFilter(string chainingModeString, string propertyName, string comparisonOperation, string targetValue)
         {
+            FilterChainingMode chainingMode = FilterChainingMode.And;
+
+            if (chainingModeString == "OR")
+                chainingMode = FilterChainingMode.Or;
+            
             FilteringOption filteringOption = FilteringOption.Equal;
 
             switch (comparisonOperation)
@@ -114,10 +150,41 @@ namespace MoneylogLib.Helpers
             Type genericFilterClass = typeof(TransactionFilter<>);
             Type filterType = genericFilterClass.MakeGenericType(genericTypeParameter);
 
-            Object filterObj = Activator.CreateInstance(filterType, propertyName, targetValueObj, filteringOption);
+            Object filterObj = Activator.CreateInstance(filterType, propertyName, targetValueObj, filteringOption, chainingMode);
 
             return (ITransactionFilter)filterObj;
         }
-        
+
+        private static List<string> GetQueriesFromInputString(string filteringQuery)
+        {
+            filteringQuery = filteringQuery.Trim();
+            
+            var queries = new List<string>();
+
+            while (filteringQuery.Length != 0)
+            {
+                var lastOrIndex = filteringQuery.ToUpper().LastIndexOf("OR");
+                var lastAndIndex = filteringQuery.ToUpper().LastIndexOf("AND");
+
+                var lastOperatorIndex = (lastOrIndex > lastAndIndex) ? lastOrIndex : lastAndIndex;
+
+                if (lastOperatorIndex != -1)
+                {
+                    string query = filteringQuery.Substring(lastOperatorIndex, filteringQuery.Length - lastOperatorIndex);
+                    filteringQuery = filteringQuery.Remove(lastOperatorIndex, filteringQuery.Length - lastOperatorIndex).Trim();
+                    
+                    queries.Add(query);
+                    continue;
+                }
+                
+                queries.Add(filteringQuery);
+                filteringQuery = filteringQuery.Remove(0);
+            }
+
+            // Restore filter oder
+            queries.Reverse();
+            
+            return queries;
+        }
     }
 }

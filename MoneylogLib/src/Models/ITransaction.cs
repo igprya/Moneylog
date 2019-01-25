@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace MoneylogLib.Models
 {
@@ -10,7 +9,7 @@ namespace MoneylogLib.Models
         TransactionType Type { get; }
         decimal Amount { get; }
         string Note { get; }
-        IEnumerable<string> Tags { get; }
+        string Tags { get; }
         DateTime CreatedTimestampUtc { get; }
     }
 }

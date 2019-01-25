@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-
 using MoneylogLib.Helpers;
-using MoneylogLib.Interfaces;
 using MoneylogLib.Models;
 using MoneylogLib.Providers;
 
@@ -30,23 +28,14 @@ namespace MoneylogLib
             return _transactionController.GetAllTransactions();
         }
 
-        public IEnumerable<ITransaction> FilterTransactions(IEnumerable<string> filterQueries)
+        public IEnumerable<ITransaction> FilterTransactions(string filteringQuery)
         {
-            var filters = new List<ITransactionFilter>();
-
-            foreach (var query in filterQueries) {
-                var f = FilterQueryParser.CreateFilter(query);
-                filters.Add(f);
-            }
-            
-            return _transactionController.Filter(filters);
+            return _transactionController.Filter(filteringQuery);
         }
 
         public void Test()
         {
-            var f = FilterQueryParser.CreateFilter("Note == test note");
-            var filters = new List<ITransactionFilter> {f};
-            var r = _transactionController.Filter(filters);
+            var f1 = FilterTransactions("Amount == 600 OR Amount >= 1000 AND Tags == lol");
         }
     }
 }

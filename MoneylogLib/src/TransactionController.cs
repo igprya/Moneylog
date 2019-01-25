@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
+using MoneylogLib.Filters;
 using MoneylogLib.Interfaces;
 using MoneylogLib.Models;
 
@@ -17,14 +18,9 @@ namespace MoneylogLib
 
         public Transaction Create(DateTime timeStampUtc, TransactionType type, decimal amount, string tagString = null, string note = null)
         {
-            string[] tags = null;
-
-            if (tagString?.Length > 0)
-            {
-                tagString = tagString.Trim();
-                tags = tagString.Split(',');
-            }
-
+            // Remove spaces from tags
+            tagString = tagString?.Replace(' ', '');
+            
             var t = new Transaction()
             {
                 CreatedTimestampUtc = DateTime.UtcNow,
@@ -32,7 +28,7 @@ namespace MoneylogLib
                 Type = type,
                 Amount = amount,
                 Note = note,
-                Tags = tags ?? null
+                Tags = tagString
             };
 
             _transactionStorage.Enqueue(t);
@@ -45,40 +41,32 @@ namespace MoneylogLib
             return _transactionStorage.Get(transactionId);
         }
 
-        public IEnumerable<Transaction> GetAllTransactions()
+        public List<Transaction> GetAllTransactions()
         {
-            return _transactionStorage.GetAll();
+            return _transactionStorage.GetAll().ToList();
         }
 
-        public IEnumerable<Transaction> Remove(int id)
+        public List<Transaction> Remove(int id)
         {
             _transactionStorage.Remove(id);
             return GetAllTransactions();
         }
 
-        public IEnumerable<Transaction> Commit()
+        public List<Transaction> Commit()
         {
             _transactionStorage.Commit();  
             return GetAllTransactions();
         }
 
-        public IEnumerable<Transaction> DropQueue()
+        public List<Transaction> DropQueue()
         {
             _transactionStorage.DropQueue();
             return GetAllTransactions();
         }
 
-        public IEnumerable<ITransaction> Filter(IEnumerable<ITransactionFilter> filterList)
+        public List<Transaction> Filter(string filteringQuery)
         {
-            var result = GetAllTransactions();
-
-            foreach (var filter in filterList)
-            {
-                result = filter.Apply(result);
-            }
-
-            return result;
+            return FilterQueryExecutor.ExecuteQuery(GetAllTransactions(), filteringQuery);
         }
-
     }
 }
