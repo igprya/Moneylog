@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoneylogLib.Filters;
+using System.Text.RegularExpressions;
+using MoneylogLib.Filtering;
 using MoneylogLib.Interfaces;
 using MoneylogLib.Models;
 
@@ -18,8 +19,8 @@ namespace MoneylogLib
 
         public Transaction Create(DateTime timeStampUtc, TransactionType type, decimal amount, string tagString = null, string note = null)
         {
-            // Remove spaces from tags
-            tagString = tagString?.Replace(' ', '');
+            if (tagString != null)
+                tagString = Regex.Replace(tagString, @"\s+", "");
             
             var t = new Transaction()
             {

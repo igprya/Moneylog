@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Filters
+namespace MoneylogLib.Filtering
 {
     class FilterQueryParser
     {

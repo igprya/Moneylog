@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Filters
+namespace MoneylogLib.Filtering
 {
     static class FilterQueryExecutor
     {

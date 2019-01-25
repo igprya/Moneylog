@@ -191,10 +191,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Filters\FilterQueryParser.cs" />
-    <Compile Include="src\Filters\ITransactionFilter.cs" />
-    <Compile Include="src\Filters\TransactionFilter.cs" />
-    <Compile Include="src\Filters\FilterQueryExecutor.cs" />
+    <Compile Include="src\Filtering\FilterQueryParser.cs" />
+    <Compile Include="src\Filtering\ITransactionFilter.cs" />
+    <Compile Include="src\Filtering\TransactionFilter.cs" />
+    <Compile Include="src\Filtering\FilterQueryExecutor.cs" />
     <Compile Include="src\Helpers\MoneylogSettings.cs" />
     <Compile Include="src\Models\ITransaction.cs" />
     <Compile Include="src\Models\Transaction.cs" />

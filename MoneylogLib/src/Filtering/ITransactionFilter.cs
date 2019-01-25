@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Filters
+namespace MoneylogLib.Filtering
 {
     interface ITransactionFilter
     {
