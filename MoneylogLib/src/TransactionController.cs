@@ -17,7 +17,7 @@ namespace MoneylogLib
             _transactionStorage = transactionStorageProvider;
         }
 
-        public Transaction Create(DateTime timeStampUtc, TransactionType type, decimal amount, string tagString = null, string note = null)
+        public Transaction Create(DateTime timeStamp, TransactionType type, decimal amount, string tagString = null, string note = null)
         {
             if (tagString != null)
                 tagString = Regex.Replace(tagString, @"\s+", "");
@@ -25,7 +25,7 @@ namespace MoneylogLib
             var t = new Transaction()
             {
                 CreatedTimestampUtc = DateTime.UtcNow,
-                TimestampUtc = timeStampUtc,
+                Timestamp = timeStamp,
                 Type = type,
                 Amount = amount,
                 Note = note,

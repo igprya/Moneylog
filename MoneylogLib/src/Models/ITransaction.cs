@@ -5,7 +5,7 @@ namespace MoneylogLib.Models
     public interface ITransaction
     {
         int? Id { get; }
-        DateTime TimestampUtc { get; }
+        DateTime Timestamp { get; }
         TransactionType Type { get; }
         decimal Amount { get; }
         string Note { get; }

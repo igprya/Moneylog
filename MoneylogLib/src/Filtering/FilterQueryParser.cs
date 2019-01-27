@@ -5,7 +5,7 @@ using MoneylogLib.Models;
 
 namespace MoneylogLib.Filtering
 {
-    class FilterQueryParser
+    static class FilterQueryParser
     {
         private static readonly Dictionary<string, Type> PropertyNameTypeMap = new Dictionary<string, Type>()
         {
@@ -34,7 +34,7 @@ namespace MoneylogLib.Filtering
             string[] queryElements = filteringQuery.Split(' ');
            
             if (queryElements.Length < 3 || queryElements.Length > 4)
-                throw new ArgumentException($"Invalid query: {filteringQuery} contains {queryElements.Length} elements; 3 or 4 elements were expected.");
+                throw new ArgumentException($"Invalid query: {filteringQuery} contains {queryElements.Length} elements; 3 or 4 elements expected.");
 
             string chainingMode = "AND";
             string propertyName;
@@ -181,7 +181,7 @@ namespace MoneylogLib.Filtering
                 filteringQuery = filteringQuery.Remove(0);
             }
 
-            // Restore filter oder
+            // Restore filter order
             queries.Reverse();
             
             return queries;

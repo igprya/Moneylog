@@ -5,7 +5,7 @@ namespace MoneylogLib.Models
     class Transaction : ITransaction
     {
         public int? Id { get; set; }
-        public DateTime TimestampUtc { get; set; }
+        public DateTime Timestamp { get; set; }
         public TransactionType Type { get; set; }
         public decimal Amount { get; set; }
         public string Note { get; set; }
@@ -19,7 +19,7 @@ namespace MoneylogLib.Models
         public Transaction(ITransaction transaction)
         {
             Id = transaction.Id;
-            TimestampUtc = transaction.TimestampUtc;
+            Timestamp = transaction.Timestamp;
             Type = transaction.Type;
             Amount = transaction.Amount;
             Note = transaction.Note;

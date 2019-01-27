@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis.Operations;
 using MoneylogLib.Helpers;
 using MoneylogLib.Models;
 using MoneylogLib.Providers;
@@ -17,10 +18,9 @@ namespace MoneylogLib
             _transactionController = new TransactionController( new JsonTransactionStorageProvider(_settings.StorageFilePath) );
         }
 
-        public void AddTransaction()
+        public void AddTransaction(DateTime timeStamp, TransactionType type, decimal amount, string tags = null, string note = null)
         {
-            _transactionController.Create(DateTime.UtcNow, TransactionType.Income, 500, "kek,quack", "none");
-            _transactionController.Commit();
+            _transactionController.Create(timeStamp, type, amount, tags, note);
         }
 
         public IEnumerable<ITransaction> GetAllTransactions()
@@ -31,6 +31,11 @@ namespace MoneylogLib
         public IEnumerable<ITransaction> FilterTransactions(string filteringQuery)
         {
             return _transactionController.Filter(filteringQuery);
+        }
+
+        public IEnumerable<ITransaction> CommitTransactions()
+        {
+            return _transactionController.Commit();
         }
 
         public void Test()

@@ -9,11 +9,9 @@ namespace MoneylogUI
         public static void Main(string[] args)
         {
             var moneylog = new Moneylog(new MoneylogSettings());
+            var ui = new TUIEngine(moneylog);
 
-          
-            moneylog.Test();
-
-            Console.WriteLine("Done");
+            ui.Run();
         }
     }
 }
