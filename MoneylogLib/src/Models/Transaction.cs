@@ -26,5 +26,10 @@ namespace MoneylogLib.Models
             Tags = transaction.Tags;
             CreatedTimestampUtc = transaction.CreatedTimestampUtc;
         }
+
+        public override string ToString()
+        {
+            return $"{Id}\t{Timestamp}\t{Type}\t{Amount}\t{Note}\t{Tags}";
+        }
     }
 }

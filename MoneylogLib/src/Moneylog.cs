@@ -27,6 +27,17 @@ namespace MoneylogLib
             return _transactionController.GetAllTransactions();
         }
 
+        public ITransaction GetTransaction(int transactionId)
+        {
+            return _transactionController.GetTransaction(transactionId);
+        }
+
+        public ITransaction EditTransaction(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount, 
+            string newTags = null, string newNote = null)
+        {
+            return _transactionController.Edit(transactionId, newTimeStamp, newType, newAmount, newTags, newNote);
+        }
+        
         public IEnumerable<ITransaction> FilterTransactions(string filteringQuery)
         {
             return _transactionController.Filter(filteringQuery);
@@ -35,11 +46,6 @@ namespace MoneylogLib
         public IEnumerable<ITransaction> CommitTransactions()
         {
             return _transactionController.Commit();
-        }
-
-        public void Test()
-        {
-            var f1 = FilterTransactions("Amount == 600 OR Amount >= 1000 AND Tags == lol");
         }
     }
 }

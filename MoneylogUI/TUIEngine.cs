@@ -28,21 +28,30 @@ namespace MoneylogUI
 
                 Clear();
 
-                switch (input)
+                try
                 {
-                    case "e" : AddExpense();
-                        break;
-                    case "i" : AddIncome();
-                        break;
-                    case "d" : AddTransactionDetails();
-                        break;
-                    case "r" : GenerateReport();
-                        break;
-                    case "c" : Save();
-                        break;
-                    case "q" : break;
-                    default  : AddExpense();
-                        break;
+                    switch (input)
+                    {
+                        case "e" : AddExpense();
+                            break;
+                        case "i" : AddIncome();
+                            break;
+                        case "d" : AddTransactionDetails();
+                            break;
+                        case "r" : GenerateReport();
+                            break;
+                        case "u" : EditTransaction();
+                            break;
+                        case "c" : Save();
+                            break;
+                        case "q" : break;
+                        default  : AddExpense();
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    WriteLine(e);
                 }
             } while (input != "q");
         }
@@ -164,6 +173,50 @@ namespace MoneylogUI
             tags = input != "" ? input : null;
             
             _moneyLog.AddTransaction(date, type, amount, tags, note);
+        }
+
+        private void EditTransaction()
+        {
+            WriteLine("*** EDIT TRANSACTION ***");
+            WriteLine();
+
+            Write("Transaction Id: ");
+            string transactionIdString = ReadLine();
+            int transactionId = int.Parse(transactionIdString);
+            ITransaction transaction = _moneyLog.GetTransaction(transactionId);
+            
+            WriteLine(transaction);
+            
+            DateTime date;
+            TransactionType type;
+            decimal amount;
+            string note;
+            string tags;
+            
+            string input;
+            
+            Write("Date: ");
+            input = ReadLine();
+            date = input == "" ? DateTime.Now : DateTime.Parse(input);
+            
+            Write("Amount: ");
+            input = ReadLine();
+            amount = decimal.Parse(input);
+            
+            Write("Type [e/i]: ");
+            input = ReadLine();
+            type = input == "i" ? TransactionType.Income : TransactionType.Expense;
+            
+            Write("Note: ");
+            input = ReadLine();
+            note = input != "" ? input : null;
+            
+            Write("Tags:");
+            input = ReadLine();
+            tags = input != "" ? input : null;
+
+            ITransaction updatedTransaction = _moneyLog.EditTransaction(transactionId, date, type, amount, tags, note);
+            WriteLine(updatedTransaction);
         }
     }
 }
