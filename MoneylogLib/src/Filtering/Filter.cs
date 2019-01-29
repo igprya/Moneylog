@@ -4,11 +4,11 @@ using MoneylogLib.Models;
 
 namespace MoneylogLib.Filtering
 {
-    static class FilterQueryExecutor
+    internal static class Filter
     {
         public static List<Transaction> ExecuteQuery(List<Transaction> transactions, string query)
         {
-            var filters = FilterQueryParser.Parse(query);
+            var filters = QueryParser.Parse(query);
             return ApplyFilters(transactions, filters);
         }
         
@@ -19,7 +19,7 @@ namespace MoneylogLib.Filtering
 
             foreach (var filter in filters)
             {
-                if (filter.ChainingMode == FilterChainingMode.And)
+                if (filter.ChainingMode == ChainingMode.And)
                 {
                     result = filter.Apply(result);
                 }

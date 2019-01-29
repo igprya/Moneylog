@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Interfaces
+namespace MoneylogLib.StorageProviders
 {
-    interface ITransactionStorageProvider
+    internal interface ITransactionStorageProvider
     {
         int Enqueue(Transaction transaction);
         IEnumerable<Transaction> GetAll();

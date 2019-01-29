@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MoneylogLib.Interfaces;
 using MoneylogLib.Models;
-
 using Newtonsoft.Json;
 
-namespace MoneylogLib.Providers
+namespace MoneylogLib.StorageProviders
 {
-    class JsonTransactionStorageProvider : ITransactionStorageProvider
+    internal class JsonTransactionStorageProvider : ITransactionStorageProvider
     {
        private Dictionary<int, Transaction> _transactionStorage = new Dictionary<int, Transaction>();
        private readonly string _storageFilePath;
@@ -70,7 +68,7 @@ namespace MoneylogLib.Providers
             }
             catch (Exception e)
             {
-                throw new IOException($"Unable to initialize transaction storage from file {_storageFilePath}");
+                throw new IOException($"Unable to initialize transaction storage from file {_storageFilePath}. Error: {e}.");
             }
         }
 
@@ -87,7 +85,7 @@ namespace MoneylogLib.Providers
             }
             catch (Exception e)
             {
-                throw new IOException($"Unable to commit transactions into file {_storageFilePath}");
+                throw new IOException($"Unable to commit transactions into file {_storageFilePath}. Error: {e}");
             }
         }
 
@@ -102,8 +100,8 @@ namespace MoneylogLib.Providers
         private int GetNewId()
         {
             if (_transactionStorage.Count == 0) return 0;
-            int? lastId = _transactionStorage.Last().Key;
-            return lastId + 1 ?? 0;
+            int lastId = _transactionStorage.Last().Key;
+            return lastId + 1;
         }
 
         private void MakeAllTransactionsCommitted()

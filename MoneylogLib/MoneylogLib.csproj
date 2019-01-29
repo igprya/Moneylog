@@ -191,10 +191,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Filtering\FilterQueryParser.cs" />
+    <Compile Include="src\Filtering\ChainingMode.cs" />
+    <Compile Include="src\Filtering\ComparisonOperation.cs" />
+    <Compile Include="src\Filtering\QueryParser.cs" />
+    <Compile Include="src\Filtering\Filters\AmountTransactionFilter.cs" />
+    <Compile Include="src\Filtering\Filters\CreatedTimestampTranscationFilter.cs" />
+    <Compile Include="src\Filtering\Filters\IdTransactionFilter.cs" />
+    <Compile Include="src\Filtering\Filters\NoteTransactionFilter.cs" />
+    <Compile Include="src\Filtering\Filters\TagsTransactionFilter.cs" />
+    <Compile Include="src\Filtering\Filters\TimestampTransactionFilter.cs" />
+    <Compile Include="src\Filtering\Filters\TypeTransactionFilter.cs" />
     <Compile Include="src\Filtering\ITransactionFilter.cs" />
     <Compile Include="src\Filtering\TransactionFilter.cs" />
-    <Compile Include="src\Filtering\FilterQueryExecutor.cs" />
+    <Compile Include="src\Filtering\Filter.cs" />
     <Compile Include="src\Helpers\MoneylogSettings.cs" />
     <Compile Include="src\Models\ITransaction.cs" />
     <Compile Include="src\Models\Transaction.cs" />

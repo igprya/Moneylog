@@ -8,11 +8,11 @@ namespace MoneylogUI
 {
     using static Console;
     
-    class TUIEngine
+    class TuiEngine
     {
         private readonly Moneylog _moneyLog;
         
-        public TUIEngine(Moneylog moneylog)
+        public TuiEngine(Moneylog moneylog)
         {
             _moneyLog = moneylog;
         }
@@ -23,24 +23,70 @@ namespace MoneylogUI
 
             do
             {
-                Write("Command: ");
+                Write("> ");
                 input = ReadLine();
 
                 Clear();
 
                 switch (input)
                 {
-                    case "a" : AddTransaction();
+                    case "e" : AddExpense();
+                        break;
+                    case "i" : AddIncome();
+                        break;
+                    case "d" : AddTransactionDetails();
                         break;
                     case "r" : GenerateReport();
                         break;
                     case "c" : Save();
                         break;
                     case "q" : break;
-                    default  : AddTransaction();
+                    default  : AddExpense();
                         break;
                 }
             } while (input != "q");
+        }
+
+        private void AddIncome()
+        {
+            WriteLine("*** INCOME **");
+            WriteLine();
+            
+            DateTime date;
+            decimal amount;
+            
+            string input;
+            
+            Write("Date: ");
+            input = ReadLine();
+            date = input == "" ? DateTime.Now : DateTime.Parse(input);
+            
+            Write("Amount: ");
+            input = ReadLine();
+            amount = Decimal.Parse(input);
+            
+            _moneyLog.AddTransaction(date, TransactionType.Income, amount);
+        }
+
+        private void AddExpense()
+        {
+            WriteLine("*** EXPENSE **");
+            WriteLine();
+            
+            DateTime date;
+            decimal amount;
+            
+            string input;
+            
+            Write("Date: ");
+            input = ReadLine();
+            date = input == "" ? DateTime.Now : DateTime.Parse(input);
+            
+            Write("Amount: ");
+            input = ReadLine();
+            amount = decimal.Parse(input);
+            
+            _moneyLog.AddTransaction(date, TransactionType.Expense, amount);
         }
 
         private void Save()
@@ -52,6 +98,9 @@ namespace MoneylogUI
         {
             Clear();
 
+            WriteLine("*** REPORT GENERATION ***");
+            WriteLine();
+            
             Write("Special query [y/n]: ");
             string isSpecialQuery = ReadLine();
 
@@ -81,8 +130,11 @@ namespace MoneylogUI
             WriteLine($"Balance:\t{balance}");
         }
 
-        private void AddTransaction()
+        private void AddTransactionDetails()
         {
+            WriteLine("*** DETAILED TRANSACTION **");
+            WriteLine();
+            
             DateTime date;
             TransactionType type;
             decimal amount;
@@ -97,7 +149,7 @@ namespace MoneylogUI
             
             Write("Amount: ");
             input = ReadLine();
-            amount = Decimal.Parse(input);
+            amount = decimal.Parse(input);
             
             Write("Type [e/i]: ");
             input = ReadLine();

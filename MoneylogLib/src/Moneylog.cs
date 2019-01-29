@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis.Operations;
 using MoneylogLib.Helpers;
 using MoneylogLib.Models;
-using MoneylogLib.Providers;
+using MoneylogLib.StorageProviders;
 
 namespace MoneylogLib
 {

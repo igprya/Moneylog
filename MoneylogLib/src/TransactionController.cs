@@ -2,13 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using MoneylogLib.Filtering;
-using MoneylogLib.Interfaces;
 using MoneylogLib.Models;
+using MoneylogLib.StorageProviders;
 
 namespace MoneylogLib
 {
-    class TransactionController
+    internal class TransactionController
     {
         private readonly ITransactionStorageProvider _transactionStorage;
 
@@ -22,7 +21,7 @@ namespace MoneylogLib
             if (tagString != null)
                 tagString = Regex.Replace(tagString, @"\s+", "");
             
-            var t = new Transaction()
+            var t = new Transaction
             {
                 CreatedTimestampUtc = DateTime.UtcNow,
                 Timestamp = timeStamp,
@@ -53,7 +52,7 @@ namespace MoneylogLib
             return GetAllTransactions();
         }
 
-        public List<Transaction> Commit()
+        public IEnumerable<Transaction> Commit()
         {
             _transactionStorage.Commit();  
             return GetAllTransactions();
@@ -65,9 +64,9 @@ namespace MoneylogLib
             return GetAllTransactions();
         }
 
-        public List<Transaction> Filter(string filteringQuery)
+        public IEnumerable<Transaction> Filter(string filteringQuery)
         {
-            return FilterQueryExecutor.ExecuteQuery(GetAllTransactions(), filteringQuery);
+            return Filtering.Filter.ExecuteQuery(GetAllTransactions(), filteringQuery);
         }
     }
 }

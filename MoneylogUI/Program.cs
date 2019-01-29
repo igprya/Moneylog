@@ -1,5 +1,4 @@
-﻿using System;
-using MoneylogLib;
+﻿using MoneylogLib;
 using MoneylogLib.Helpers;
 
 namespace MoneylogUI
@@ -9,7 +8,7 @@ namespace MoneylogUI
         public static void Main(string[] args)
         {
             var moneylog = new Moneylog(new MoneylogSettings());
-            var ui = new TUIEngine(moneylog);
+            var ui = new TuiEngine(moneylog);
 
             ui.Run();
         }
