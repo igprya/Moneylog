@@ -195,11 +195,10 @@
     <Compile Include="src\Filtering\ComparisonOperation.cs" />
     <Compile Include="src\Filtering\QueryParser.cs" />
     <Compile Include="src\Filtering\Filters\AmountTransactionFilter.cs" />
-    <Compile Include="src\Filtering\Filters\CreatedTimestampTranscationFilter.cs" />
     <Compile Include="src\Filtering\Filters\IdTransactionFilter.cs" />
     <Compile Include="src\Filtering\Filters\NoteTransactionFilter.cs" />
     <Compile Include="src\Filtering\Filters\TagsTransactionFilter.cs" />
-    <Compile Include="src\Filtering\Filters\TimestampTransactionFilter.cs" />
+    <Compile Include="src\Filtering\Filters\DateTransactionFilter.cs" />
     <Compile Include="src\Filtering\Filters\TypeTransactionFilter.cs" />
     <Compile Include="src\Filtering\ITransactionFilter.cs" />
     <Compile Include="src\Filtering\TransactionFilter.cs" />

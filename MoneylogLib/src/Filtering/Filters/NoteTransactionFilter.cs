@@ -8,5 +8,13 @@ namespace MoneylogLib.Filtering.Filters
             : base(PropertyName, filteringValue, comparisonOperation, chainingMode)
         {
         }
+
+        protected override bool Filter(string transactionProperty)
+        {
+            if (transactionProperty == null)
+                return false;
+
+            return transactionProperty.Contains(FilteringValue);
+        }    
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using MoneylogLib.Filtering.Filters;
 using MoneylogLib.Models;
 
@@ -42,35 +43,36 @@ namespace MoneylogLib.Filtering
 
         private static QueryElements GetQueryElements(string filteringQuery)
         {
-            string[] queryItems = filteringQuery.Split(' ');
+            var splitRegex = new Regex("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+            var queryItems = splitRegex.Matches(filteringQuery);
+         
+            if (queryItems.Count < 3 || queryItems.Count > 4)
+                throw new ArgumentException($"Invalid query: {filteringQuery} contains {queryItems.Count} elements; 3 or 4 elements expected.");
            
-            if (queryItems.Length < 3 || queryItems.Length > 4)
-                throw new ArgumentException($"Invalid query: {filteringQuery} contains {queryItems.Length} elements; 3 or 4 elements expected.");
-           
-            if (queryItems[0].ToUpper() == "OR" || queryItems[0].ToUpper() == "AND")
+            if (queryItems[0].Value.ToUpper() == "OR" || queryItems[0].Value.ToUpper() == "AND")
             {
                 return new QueryElements
                 {
-                    ChainingMode = queryItems[0].ToUpper(),
-                    PropertyName = queryItems[1],
-                    ComparisonOperation = queryItems[2],
-                    TargetValue = queryItems[3]
+                    ChainingMode = queryItems[0].Value.ToUpper(),
+                    PropertyName = queryItems[1].Value,
+                    ComparisonOperation = queryItems[2].Value,
+                    TargetValue = queryItems[3].Value.Replace("\"", "")
                 };
             }
 
             return new QueryElements
             {
-                PropertyName = queryItems[0],
-                ComparisonOperation = queryItems[1],
-                TargetValue = queryItems[2]
+                PropertyName = queryItems[0].Value,
+                ComparisonOperation = queryItems[1].Value,
+                TargetValue = queryItems[2].Value.Replace("\"", "")
             };
         }
 
         private static void ValidateQueryElements(QueryElements queryElements)
         {
-            string[] validChainingModes = new[] {"OR", "AND"};
-            string[] validPropertyNames = new[] {"Id", "Timestamp", "Type", "Amount", "Note", "Tags", "CreatedTimestamp"};
-            string[] validOperations = new[] {"<", "<=", "==", ">", ">=", "!="};
+            var validChainingModes = new[] {"OR", "AND"};
+            var validPropertyNames = new[] {"Id", "Date", "Type", "Amount", "Note", "Tags"};
+            var validOperations = new[] {"<", "<=", "=", ">", ">=", "!="};
             
             if (!validChainingModes.Contains(queryElements.ChainingMode))
                 throw new ArgumentException($"{queryElements.ChainingMode} is not a valid filter chaining mode.");
@@ -79,7 +81,7 @@ namespace MoneylogLib.Filtering
                 throw new ArgumentException($"{queryElements.PropertyName} is not a valid Transaction property.");
             
             if (queryElements.PropertyName == "Note" || queryElements.PropertyName == "Tags")
-                validOperations = new[] {"==", "!="};
+                validOperations = new[] {"=", "!="};
             
             if (!validOperations.Contains(queryElements.ComparisonOperation))
                 throw new ArgumentException($"{queryElements.ComparisonOperation} is not a valid comparison operation for property {queryElements.PropertyName}.");
@@ -90,7 +92,7 @@ namespace MoneylogLib.Filtering
             {
                 case "Id": validTargetValue = int.TryParse(queryElements.TargetValue, out _); 
                     break;
-                case "Timestamp": validTargetValue = DateTime.TryParse(queryElements.TargetValue, out _);
+                case "Date": validTargetValue = DateTime.TryParse(queryElements.TargetValue, out _);
                     break;
                 case "Type": validTargetValue = queryElements.TargetValue == "Income" || queryElements.TargetValue == "Expense";
                     break;
@@ -138,8 +140,9 @@ namespace MoneylogLib.Filtering
                     return new IdTransactionFilter(int.Parse(queryElements.TargetValue)
                         ,comparisonOperation
                         ,chainingMode);
-                case "Timestamp": 
-                    return new TimestampTransactionFilter(DateTime.Parse(queryElements.TargetValue)
+                case "Date": 
+                    return new DateTransactionFilter("Timestamp"
+                        ,DateTime.Parse(queryElements.TargetValue)
                         ,comparisonOperation
                         ,chainingMode);
                 case "Type": 
@@ -156,10 +159,6 @@ namespace MoneylogLib.Filtering
                         ,chainingMode);
                 case "Tags":
                     return new TagsTransactionFilter(queryElements.TargetValue
-                        ,comparisonOperation
-                        ,chainingMode);
-                case "CreatedTimestamp":
-                    return new CreatedTimestampTransactionFilter(DateTime.Parse(queryElements.TargetValue)
                         ,comparisonOperation
                         ,chainingMode);
             }

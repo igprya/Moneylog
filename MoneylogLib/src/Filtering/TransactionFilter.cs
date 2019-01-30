@@ -20,7 +20,7 @@ namespace MoneylogLib.Filtering
             ChainingMode = chainingMode;
         }
 
-        public List<Transaction> Apply(IEnumerable<Transaction> transactions)
+        public virtual List<Transaction> Apply(IEnumerable<Transaction> transactions)
         {
             var result = new List<Transaction>();
 
@@ -42,6 +42,9 @@ namespace MoneylogLib.Filtering
 
         protected virtual bool Filter(T transactionProperty)
         {
+            if (transactionProperty == null)
+                return false;
+            
             switch (ComparisonOperation)
             {
                 case ComparisonOperation.Greater:
