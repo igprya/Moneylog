@@ -13,6 +13,7 @@ namespace MoneylogLib.Models
         public DateTime CreatedTimestampUtc { get; set; }
 
         [NonSerialized] public bool Committed = false;
+        [NonSerialized] public bool Deleted = false;
 
         public Transaction() { }
         

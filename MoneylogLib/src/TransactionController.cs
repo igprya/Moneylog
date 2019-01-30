@@ -49,20 +49,7 @@ namespace MoneylogLib
         public Transaction Edit(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount,
             string newTags = null, string newNote = null)
         {
-            var transaction = GetTransaction(transactionId);
-
-            if (transaction != null)
-            {
-                transaction.Timestamp = newTimeStamp;
-                transaction.Type = newType;
-                transaction.Amount = newAmount;
-                transaction.Tags = newTags;
-                transaction.Note = newNote;
-
-                return transaction;
-            }
-
-            throw new ArgumentException($"A transaction with an Id {transactionId} doesn't exist.");
+            return _transactionStorage.Edit(transactionId, newTimeStamp, newType, newAmount, newTags, newNote);
         }
         
         public List<Transaction> Remove(int id)
@@ -77,6 +64,11 @@ namespace MoneylogLib
             return GetAllTransactions();
         }
 
+        public IEnumerable<Transaction> GetPendingTransactions()
+        {
+            return _transactionStorage.GetPending();
+        }
+        
         public List<Transaction> DropQueue()
         {
             _transactionStorage.DropQueue();

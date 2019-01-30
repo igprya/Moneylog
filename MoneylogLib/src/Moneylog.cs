@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MoneylogLib.Helpers;
 using MoneylogLib.Models;
 using MoneylogLib.StorageProviders;
@@ -21,10 +22,23 @@ namespace MoneylogLib
         {
             _transactionController.Create(timeStamp, type, amount, tags, note);
         }
-
-        public IEnumerable<ITransaction> GetAllTransactions()
+        
+        public ITransaction EditTransaction(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount, 
+            string newTags = null, string newNote = null)
         {
-            return _transactionController.GetAllTransactions();
+            return _transactionController.Edit(transactionId, newTimeStamp, newType, newAmount, newTags, newNote);
+        }
+
+        public IEnumerable<ITransaction> GetTransactions(string query = null)
+        {
+            IEnumerable<Transaction> result = null;
+            
+            if (string.IsNullOrEmpty(query))
+                result = _transactionController.GetAllTransactions();
+            else
+                result = _transactionController.Filter(query);
+
+            return result.OrderBy(o => o.Timestamp);
         }
 
         public ITransaction GetTransaction(int transactionId)
@@ -32,17 +46,21 @@ namespace MoneylogLib
             return _transactionController.GetTransaction(transactionId);
         }
 
-        public ITransaction EditTransaction(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount, 
-            string newTags = null, string newNote = null)
+        public void RemoveTransaction(int transactionId)
         {
-            return _transactionController.Edit(transactionId, newTimeStamp, newType, newAmount, newTags, newNote);
+            _transactionController.Remove(transactionId);
         }
         
-        public IEnumerable<ITransaction> FilterTransactions(string filteringQuery)
+        public IEnumerable<ITransaction> GetPendingTransactions()
         {
-            return _transactionController.Filter(filteringQuery);
+            return _transactionController.GetPendingTransactions().OrderBy(o => o.Timestamp);
         }
 
+        public IEnumerable<ITransaction> DropQueue()
+        {
+            return _transactionController.DropQueue();
+        }
+        
         public IEnumerable<ITransaction> CommitTransactions()
         {
             return _transactionController.Commit();
