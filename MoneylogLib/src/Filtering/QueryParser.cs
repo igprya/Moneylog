@@ -98,9 +98,9 @@ namespace MoneylogLib.Filtering
                     break;
                 case "Amount": validTargetValue = decimal.TryParse(queryElements.TargetValue, out _);
                     break;
-                case "Note": validTargetValue = !string.IsNullOrEmpty(queryElements.TargetValue);
+                case "Note": validTargetValue = queryElements.TargetValue != null;
                     break;
-                case "Tags": validTargetValue = !string.IsNullOrEmpty(queryElements.TargetValue);
+                case "Tags": validTargetValue = queryElements.TargetValue != null;
                     break;
                 case "CreatedTimestamp": validTargetValue = DateTime.TryParse(queryElements.TargetValue, out _);
                     break;

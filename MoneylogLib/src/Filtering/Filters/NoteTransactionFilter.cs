@@ -11,10 +11,20 @@ namespace MoneylogLib.Filtering.Filters
 
         protected override bool Filter(string transactionProperty)
         {
-            if (transactionProperty == null)
-                return false;
+            var noteIsNullOrEmpty = string.IsNullOrEmpty(transactionProperty);
+            bool noteContainsValue;
+            
+            if (noteIsNullOrEmpty)
+            {
+                noteContainsValue = FilteringValue == "";
+                return ComparisonOperation == ComparisonOperation.Equal ? noteContainsValue : !noteContainsValue;
+            }
 
-            return transactionProperty.Contains(FilteringValue);
+            if (FilteringValue == "")
+                return ComparisonOperation != ComparisonOperation.Equal;
+
+            noteContainsValue = transactionProperty.Contains(FilteringValue);
+            return ComparisonOperation == ComparisonOperation.Equal ? noteContainsValue : !noteContainsValue;
         }    
     }
 }
