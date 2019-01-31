@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MoneylogLib.Models;
 
 namespace MoneylogLib.Filtering
@@ -25,9 +26,13 @@ namespace MoneylogLib.Filtering
                 }
                 else
                 {
-                    result.AddRange(filter.Apply(transactions));
+                    var tResult = filter.Apply(transactions);
+                    
+                    foreach (var t in tResult)
+                        if (!result.Contains(t))
+                            result.Add(t);
                 }
-            }    
+            }
 
             return result;
         }
