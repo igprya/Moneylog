@@ -4,6 +4,7 @@ using System.Linq;
 using MoneylogLib.Helpers;
 using MoneylogLib.Models;
 using MoneylogLib.StorageProviders;
+using MoneylogLib.Filtering;
 
 namespace MoneylogLib
 {
@@ -31,12 +32,10 @@ namespace MoneylogLib
 
         public IEnumerable<ITransaction> GetTransactions(string query = null)
         {
-            IEnumerable<Transaction> result = null;
-            
-            if (string.IsNullOrEmpty(query))
-                result = _transactionController.GetAllTransactions();
-            else
-                result = _transactionController.Filter(query);
+            var result = _transactionController.GetAllTransactions();
+
+            if (!string.IsNullOrEmpty(query))
+                result = Filter.ExecuteQuery(result, query);
 
             return result.OrderBy(o => o.Timestamp);
         }

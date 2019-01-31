@@ -74,10 +74,5 @@ namespace MoneylogLib
             _transactionStorage.DropQueue();
             return GetAllTransactions();
         }
-
-        public IEnumerable<Transaction> Filter(string filteringQuery)
-        {
-            return Filtering.Filter.ExecuteQuery(GetAllTransactions(), filteringQuery);
-        }
     }
 }
