@@ -57,11 +57,20 @@ namespace MoneylogLib.StorageProviders
         {
             if (_transactionStorage.ContainsKey(id))
             {
-                _transactionStorage[id].Deleted = true;
-                _transactionStorage[id].Committed = false;
+                if (_transactionStorage[id].Committed)
+                {
+                    _transactionStorage[id].Deleted = true;
+                    _transactionStorage[id].Committed = false;
+                }
+                else
+                {
+                    _transactionStorage.Remove(id);
+                }
             }
-                
-            throw new ArgumentException($"A transaction with and Id of {id} does not exist.");
+            else
+            {
+                throw new ArgumentException($"A transaction with and Id of {id} does not exist.");
+            }
         }    
         
         public int Enqueue(Transaction transaction)
