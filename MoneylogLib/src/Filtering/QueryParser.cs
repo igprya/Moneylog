@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MoneylogLib.Filtering.Filters;
+using MoneylogLib.Filtering.Ordering;
 using MoneylogLib.Models;
 
 namespace MoneylogLib.Filtering
@@ -60,6 +61,16 @@ namespace MoneylogLib.Filtering
                 };
             }
 
+            if (queryItems[0].Value.ToUpper() == "ORDERBY")
+            {
+                return new QueryElements
+                {
+                    ChainingMode = queryItems[0].Value.ToUpper(),
+                    PropertyName = queryItems[1].Value,
+                    ComparisonOperation = queryItems[2].Value.ToUpper()
+                };
+            }
+            
             return new QueryElements
             {
                 PropertyName = queryItems[0].Value,
@@ -70,9 +81,21 @@ namespace MoneylogLib.Filtering
 
         private static void ValidateQueryElements(QueryElements queryElements)
         {
-            var validChainingModes = new[] {"OR", "AND"};
+            var validChainingModes = new[] {"OR", "AND", "ORDERBY"};
             var validPropertyNames = new[] {"Id", "Date", "Type", "Amount", "Note", "Tags"};
-            var validOperations = new[] {"<", "<=", "=", ">", ">=", "!="};
+            var validComparisonOperations = new[] {"<", "<=", "=", ">", ">=", "!="};
+            var validOrderingOperations = new[] {"ASC", "DESC"};
+
+            if (queryElements.ChainingMode == "ORDERBY")
+            {
+                if (!validPropertyNames.Contains(queryElements.PropertyName))
+                    throw new ArgumentException($"{queryElements.PropertyName} is not a valid Transaction property.");
+                
+                if (!validOrderingOperations.Contains(queryElements.ComparisonOperation))
+                    throw new ArgumentException($"{queryElements.ComparisonOperation} is not a valid ordering operation.");
+
+                return;
+            }
             
             if (!validChainingModes.Contains(queryElements.ChainingMode))
                 throw new ArgumentException($"{queryElements.ChainingMode} is not a valid filter chaining mode.");
@@ -81,9 +104,9 @@ namespace MoneylogLib.Filtering
                 throw new ArgumentException($"{queryElements.PropertyName} is not a valid Transaction property.");
             
             if (queryElements.PropertyName == "Note" || queryElements.PropertyName == "Tags")
-                validOperations = new[] {"=", "!="};
+                validComparisonOperations = new[] {"=", "!="};
             
-            if (!validOperations.Contains(queryElements.ComparisonOperation))
+            if (!validComparisonOperations.Contains(queryElements.ComparisonOperation))
                 throw new ArgumentException($"{queryElements.ComparisonOperation} is not a valid comparison operation for property {queryElements.PropertyName}.");
 
             bool validTargetValue = false;
@@ -113,6 +136,9 @@ namespace MoneylogLib.Filtering
 
         private static ITransactionFilter CreateFilter(QueryElements queryElements)
         {
+            if (queryElements.ChainingMode == "ORDERBY")
+                return new OrderingFilter(queryElements.PropertyName, queryElements.ComparisonOperation);
+            
             var chainingMode = ChainingMode.And;
 
             if (queryElements.ChainingMode == "OR")
@@ -165,12 +191,20 @@ namespace MoneylogLib.Filtering
             
             throw new InvalidOperationException("Unexpected error while attempting to create a filter.");
         }
-
+        
         private static List<string> GetQueriesFromInputString(string filteringQuery)
         {
             filteringQuery = filteringQuery.Trim();
             
             var queries = new List<string>();
+
+            var lastOrderByIndex = filteringQuery.LastIndexOf("ORDERBY");
+            if (lastOrderByIndex != -1)
+            {
+                var query = filteringQuery.Substring(lastOrderByIndex, filteringQuery.Length - lastOrderByIndex);
+                filteringQuery = filteringQuery.Remove(lastOrderByIndex, filteringQuery.Length - lastOrderByIndex).Trim();
+                queries.Add(query);
+            }
 
             while (filteringQuery.Length != 0)
             {

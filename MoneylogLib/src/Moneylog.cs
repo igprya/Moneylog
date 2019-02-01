@@ -37,7 +37,7 @@ namespace MoneylogLib
             if (!string.IsNullOrEmpty(query))
                 result = Filter.ExecuteQuery(result, query);
 
-            return result.OrderBy(o => o.Timestamp);
+            return result;
         }
 
         public ITransaction GetTransaction(int transactionId)
