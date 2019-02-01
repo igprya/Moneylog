@@ -126,7 +126,7 @@ namespace MoneylogUI
                 Write("Y/N [N]: ");
                 var input = ReadLine();
 
-                if (input == "Y")
+                if (input.ToUpper() == "Y")
                 {
                     _moneyLog.RemoveTransaction(id);
                     WriteLine("Done.");
@@ -185,7 +185,7 @@ namespace MoneylogUI
                 Write("Y/N [N]: ");
                 var input = ReadLine();
 
-                if (input == "Y")
+                if (input.ToUpper() == "Y")
                 {
                     _moneyLog.DropQueue();
                     WriteLine("Done.");
@@ -218,7 +218,7 @@ namespace MoneylogUI
                 Write("Y/N [Y]: ");
                 var input = ReadLine();
 
-                if (input != "N")
+                if (input.ToUpper() != "N")
                 {
                     _moneyLog.CommitTransactions();
                     WriteLine("Done.");
@@ -245,10 +245,10 @@ namespace MoneylogUI
             string note = null;
             string tags = null;
 
-            Write("Enqueue now? [Yes]: ");
-            var commit = ReadLine();
+            Write("Enqueue now? [Y]: ");
+            var input = ReadLine();
             
-            if (!string.IsNullOrEmpty(commit))
+            if (input.ToUpper() == "N")
             {
                 note = Read<string>("Note", dNote ?? "");
                 tags = Read<string>("Tags", dTags ?? "");
@@ -298,6 +298,8 @@ namespace MoneylogUI
             var pending = _moneyLog.GetPendingTransactions();
             if (pending?.Count() > 0)
                 WriteLine($"{pending.Count()} uncommitted transactions.");
+            else
+                WriteLine("No pending transactions.");
         }
 
         private void PrintSplash()
