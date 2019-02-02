@@ -215,6 +215,16 @@
     <Compile Include="src\Models\Transaction.cs" />
     <Compile Include="src\Models\TransactionType.cs" />
     <Compile Include="src\Moneylog.cs" />
+    <Compile Include="src\Reporting\Helpers\DateTimeDayEqualityComparer.cs" />
+    <Compile Include="src\Reporting\Helpers\DateTimeMonthEqualityComparer.cs" />
+    <Compile Include="src\Reporting\Helpers\DateTimeYearEqualityComparer.cs" />
+    <Compile Include="src\Reporting\Report.cs" />
+    <Compile Include="src\Reporting\ReportGenerator.cs" />
+    <Compile Include="src\Reporting\Reports\DayReport.cs" />
+    <Compile Include="src\Reporting\Reports\MonthReport.cs" />
+    <Compile Include="src\Reporting\Reports\RangeDailyReport.cs" />
+    <Compile Include="src\Reporting\Reports\YearReport.cs" />
+    <Compile Include="src\Reporting\ReportType.cs" />
     <Compile Include="src\StorageProviders\ITransactionStorageProvider.cs" />
     <Compile Include="src\StorageProviders\JsonTransactionStorageProvider.cs" />
     <Compile Include="src\TransactionController.cs" />

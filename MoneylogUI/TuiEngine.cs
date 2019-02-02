@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Linq;
 using MoneylogLib;
 using MoneylogLib.Models;
+using MoneylogLib.Reporting;
 
 namespace MoneylogUI
 {
@@ -60,6 +61,9 @@ namespace MoneylogUI
                         case "c": 
                             CommitTransactions();
                             break;
+                        case "i":
+                            GenerateRepot();
+                            break;
                         default:
                             AddTransaction();
                             break;
@@ -71,6 +75,26 @@ namespace MoneylogUI
                 }
 
             } while (input != "x");
+        }
+
+        private void GenerateRepot()
+        {
+            WriteLine("*** REPORTING ***");
+            WriteLine();
+
+            var startDate = Read<DateTime>("start date", DateTime.Now.ToString());
+            var reportType = Read<ReportType>("report type", ReportType.Month.ToString());
+            var endDate = DateTime.Now;
+
+            if (reportType == ReportType.RangeDaily)
+                endDate = Read<DateTime>("range end date", DateTime.Now.AddMonths(1).ToString());
+
+            var filteringQuery = Read<string>("filtering query", "");
+            var report = _moneyLog.GenerateReport(reportType, startDate, endDate, filteringQuery);
+            
+            PrintReport(report, filteringQuery);
+            
+            WriteLine("Done.");
         }
 
         private void AddTransaction()
@@ -284,6 +308,46 @@ namespace MoneylogUI
             }
         }
 
+        private void PrintReport(Report report, string filteringQuery)
+        {
+            WriteLine();
+            WriteLine($"{report.Type} report for {report.StartDate.ToShortDateString()} - {report.EndDate.ToShortDateString()} period.");
+
+            if (!string.IsNullOrEmpty(filteringQuery))
+            {
+                WriteLine("-----------------------------------------------------------------------");
+                WriteLine($"Constraint: {filteringQuery}");
+            }
+            
+            WriteLine("-----------------------------------------------------------------------");
+            WriteLine($"Total income:\t\t{report.Income}");
+            WriteLine($"Income transactions:\t{report.IncomeTransactionsCount}");
+            WriteLine($"Average income:\t\t{report.AverageIncome:N2}");
+            WriteLine();
+            WriteLine($"Total expenses:\t\t{report.Expense}");
+            WriteLine($"Expense transactions:\t{report.ExpenseTransactionsCount}");
+            WriteLine($"Average expense:\t{report.AverageExpense:N2}");
+            WriteLine("----------------------------------------------------------------------");
+            WriteLine($"Balance:\t\t{report.Balance}");
+            WriteLine();
+
+            if (report.Subreports != null)
+            {
+                Write("Show immediate subreports [N]: ");
+                var input = ReadLine();
+
+                if (input.ToUpper() == "Y")
+                {
+                    WriteLine();
+                    WriteLine("SUBREPORTS:");
+                    WriteLine("-----------");
+                    foreach (var sr in report.Subreports)
+                        WriteLine(sr);
+                    WriteLine();
+                }
+            }
+        }
+        
         private string Prompt()
         {
             Write("> ");

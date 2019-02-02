@@ -2,7 +2,7 @@ using System;
 
 namespace MoneylogLib.Models
 {
-    internal class Transaction : ITransaction
+    public class Transaction : ITransaction
     {
         public int? Id { get; set; }
         public DateTime Timestamp { get; set; }

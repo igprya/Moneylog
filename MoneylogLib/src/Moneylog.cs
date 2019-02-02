@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using MoneylogLib.Helpers;
 using MoneylogLib.Models;
 using MoneylogLib.StorageProviders;
 using MoneylogLib.Filtering;
+using MoneylogLib.Reporting;
 
 namespace MoneylogLib
 {
@@ -30,12 +30,12 @@ namespace MoneylogLib
             return _transactionController.Edit(transactionId, newTimeStamp, newType, newAmount, newTags, newNote);
         }
 
-        public IEnumerable<ITransaction> GetTransactions(string query = null)
+        public IEnumerable<ITransaction> GetTransactions(string filteringQuery = null)
         {
             var result = _transactionController.GetAllTransactions();
 
-            if (!string.IsNullOrEmpty(query))
-                result = Filter.ExecuteQuery(result, query);
+            if (!string.IsNullOrEmpty(filteringQuery))
+                result = Filter.ExecuteQuery(result, filteringQuery);
 
             return result;
         }
@@ -52,7 +52,7 @@ namespace MoneylogLib
         
         public IEnumerable<ITransaction> GetPendingTransactions()
         {
-            return _transactionController.GetPendingTransactions().OrderBy(o => o.Timestamp);
+            return _transactionController.GetPendingTransactions();
         }
 
         public IEnumerable<ITransaction> DropQueue()
@@ -63,6 +63,17 @@ namespace MoneylogLib
         public IEnumerable<ITransaction> CommitTransactions()
         {
             return _transactionController.Commit();
+        }
+
+        public Report GenerateReport(ReportType type, DateTime startDate, DateTime endDate, string filteringQuery)
+        {
+            var transactions = _transactionController.GetAllTransactions();
+            
+            return ReportGenerator.CreateReport(type,
+                transactions,
+                startDate,
+                endDate,
+                filteringQuery);
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 
 namespace MoneylogLib.Filtering.Filters
@@ -17,6 +18,8 @@ namespace MoneylogLib.Filtering.Filters
             string[] filteringTags = FilteringValue?.Split(',');
             bool tagsMatch;
             
+            if (filteringTags == null)
+                throw new ArgumentException("Filtering tags are null.");
             
             if (transactionTags == null)
             {
