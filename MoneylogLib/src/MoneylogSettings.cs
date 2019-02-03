@@ -1,4 +1,4 @@
-namespace MoneylogLib.Helpers
+namespace MoneylogLib
 {
     public class MoneylogSettings
     {

@@ -8,13 +8,12 @@ namespace MoneylogLib.StorageProviders
     {
         
         IEnumerable<Transaction> GetAll();
-        IEnumerable<Transaction> GetPending();
         Transaction Get(int id);
-        Transaction Edit(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount,
-            string newTags = null, string newNote = null);
+        Transaction Edit(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount, string newNote = null, string newTags = null);
         void Remove(int id);
-        int Enqueue(Transaction transaction);
-        void DropQueue();
-        void Commit();
+        int Stage(Transaction transaction);
+        IEnumerable<Transaction> GetStaged();
+        void UnstageAll();
+        void CommitAll();
     }
 }

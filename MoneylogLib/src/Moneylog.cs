@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using MoneylogLib.Helpers;
 using MoneylogLib.Models;
 using MoneylogLib.StorageProviders;
 using MoneylogLib.Filtering;
@@ -10,24 +9,24 @@ namespace MoneylogLib
 {
     public class Moneylog
     {
-        private MoneylogSettings _settings;
-        private TransactionController _transactionController;
+        private readonly MoneylogSettings _settings;
+        private readonly TransactionController _transactionController;
 
         public Moneylog(MoneylogSettings settings)
         {
             _settings = settings;
-            _transactionController = new TransactionController( new JsonTransactionStorageProvider(_settings.StorageFilePath) );
+            _transactionController = new TransactionController( new JsonStorageProvider(_settings.StorageFilePath) );
         }
 
-        public void AddTransaction(DateTime timeStamp, TransactionType type, decimal amount, string tags = null, string note = null)
+        public void AddTransaction(DateTime timeStamp, TransactionType type, decimal amount, string note = null, string tags = null)
         {
-            _transactionController.Create(timeStamp, type, amount, tags, note);
+            _transactionController.Create(timeStamp, type, amount, note, tags);
         }
         
         public ITransaction EditTransaction(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount, 
-            string newTags = null, string newNote = null)
+            string newNote = null, string newTags = null)
         {
-            return _transactionController.Edit(transactionId, newTimeStamp, newType, newAmount, newTags, newNote);
+            return _transactionController.Edit(transactionId, newTimeStamp, newType, newAmount, newNote, newTags);
         }
 
         public IEnumerable<ITransaction> GetTransactions(string filteringQuery = null)
@@ -50,19 +49,19 @@ namespace MoneylogLib
             _transactionController.Remove(transactionId);
         }
         
-        public IEnumerable<ITransaction> GetPendingTransactions()
+        public IEnumerable<ITransaction> GetStagedTransactions()
         {
-            return _transactionController.GetPendingTransactions();
+            return _transactionController.GetStagedTransactions();
         }
 
-        public IEnumerable<ITransaction> DropQueue()
+        public IEnumerable<ITransaction> UnstageAllTransactions()
         {
-            return _transactionController.DropQueue();
+            return _transactionController.UnstageAll();
         }
         
         public IEnumerable<ITransaction> CommitTransactions()
         {
-            return _transactionController.Commit();
+            return _transactionController.CommitAll();
         }
 
         public Report GenerateReport(ReportType type, DateTime startDate, DateTime endDate, string filteringQuery)

@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Filtering.Ordering
+namespace MoneylogLib.Filtering.Helpers
 {
     internal class TransactionTagsComparer : IComparer<Transaction>
     {
         public int Compare(Transaction x, Transaction y)
         {
             if (x == null || y == null)
-                return 0;
+                throw new NullReferenceException("Unable to compare Transaction to null.");
             
             if (x.Tags == null && y.Tags == null)
                 return 0;

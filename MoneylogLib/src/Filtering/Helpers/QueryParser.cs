@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MoneylogLib.Filtering.Filters;
-using MoneylogLib.Filtering.Ordering;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Filtering
+namespace MoneylogLib.Filtering.Helpers
 {
     internal static class QueryParser
     {
@@ -167,8 +166,7 @@ namespace MoneylogLib.Filtering
                         ,comparisonOperation
                         ,chainingMode);
                 case "Date": 
-                    return new DateTransactionFilter("Timestamp"
-                        ,DateTime.Parse(queryElements.TargetValue)
+                    return new DateTransactionFilter(DateTime.Parse(queryElements.TargetValue)
                         ,comparisonOperation
                         ,chainingMode);
                 case "Type": 

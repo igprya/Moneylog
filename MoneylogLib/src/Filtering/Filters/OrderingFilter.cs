@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MoneylogLib.Filtering.Helpers;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Filtering.Ordering
+namespace MoneylogLib.Filtering.Filters
 {
     internal class OrderingFilter : ITransactionFilter
     {
         protected readonly string PropertyName;
-        protected readonly bool Ascending = true;
+        protected readonly bool Ascending;
 
         public ChainingMode ChainingMode { get; }
         

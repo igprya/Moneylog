@@ -31,8 +31,8 @@ namespace MoneylogLib.Reporting.Reports
             StartDate = startDate;
             EndDate = endDate;
 
-            var rangeTransactions = transactions.Where(t => t.Timestamp >= StartDate && t.Timestamp <= EndDate);
-            var days = rangeTransactions.Select(t => t.Timestamp).Distinct(new DateTimeDayEqualityComparer()).ToList();
+            var rangeTransactions = transactions.Where(t => t.Date >= StartDate && t.Date <= EndDate);
+            var days = rangeTransactions.Select(t => t.Date).Distinct(new DateTimeDayEqualityComparer()).ToList();
 
             foreach (var d in days)
             {

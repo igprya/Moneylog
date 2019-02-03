@@ -16,22 +16,21 @@ namespace MoneylogLib
             _transactionStorage = transactionStorageProvider;
         }
 
-        public Transaction Create(DateTime timeStamp, TransactionType type, decimal amount, string tagString = null, string note = null)
+        public Transaction Create(DateTime timeStamp, TransactionType type, decimal amount, string note = null, string tags = null)
         {
-            if (tagString != null)
-                tagString = Regex.Replace(tagString, @"\s+", "");
+            if (tags != null)
+                tags = Regex.Replace(tags, @"\s+", "");
             
             var t = new Transaction
             {
-                CreatedTimestampUtc = DateTime.UtcNow,
-                Timestamp = timeStamp,
+                Date = timeStamp,
                 Type = type,
                 Amount = amount,
                 Note = note,
-                Tags = tagString
+                Tags = tags
             };
 
-            _transactionStorage.Enqueue(t);
+            _transactionStorage.Stage(t);
 
             return t;
         }
@@ -47,9 +46,9 @@ namespace MoneylogLib
         }
 
         public Transaction Edit(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount,
-            string newTags = null, string newNote = null)
+            string newNote = null, string newTags = null)
         {
-            return _transactionStorage.Edit(transactionId, newTimeStamp, newType, newAmount, newTags, newNote);
+            return _transactionStorage.Edit(transactionId, newTimeStamp, newType, newAmount, newNote, newTags);
         }
         
         public List<Transaction> Remove(int id)
@@ -58,20 +57,20 @@ namespace MoneylogLib
             return GetAllTransactions();
         }
 
-        public IEnumerable<Transaction> Commit()
+        public IEnumerable<Transaction> CommitAll()
         {
-            _transactionStorage.Commit();  
+            _transactionStorage.CommitAll();  
             return GetAllTransactions();
         }
 
-        public IEnumerable<Transaction> GetPendingTransactions()
+        public IEnumerable<Transaction> GetStagedTransactions()
         {
-            return _transactionStorage.GetPending();
+            return _transactionStorage.GetStaged();
         }
         
-        public List<Transaction> DropQueue()
+        public List<Transaction> UnstageAll()
         {
-            _transactionStorage.DropQueue();
+            _transactionStorage.UnstageAll();
             return GetAllTransactions();
         }
     }

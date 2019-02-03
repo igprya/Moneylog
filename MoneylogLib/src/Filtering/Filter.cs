@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using MoneylogLib.Filtering.Helpers;
 using MoneylogLib.Models;
 
 namespace MoneylogLib.Filtering

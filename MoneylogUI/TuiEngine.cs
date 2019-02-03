@@ -103,7 +103,7 @@ namespace MoneylogUI
             WriteLine();
             
             var t = ReadTransaction();
-            _moneyLog.AddTransaction(t.Timestamp, t.Type, t.Amount, t.Tags, t.Note);
+            _moneyLog.AddTransaction(t.Timestamp, t.Type, t.Amount, t.Note, t.Tags);
             
             WriteLine("Done.");
         }
@@ -123,8 +123,8 @@ namespace MoneylogUI
                 WriteLine();
                 
                 WriteLine("Enter new values");
-                var newT = ReadTransaction(oldT.Timestamp.ToString(), oldT.Amount.ToString(), oldT.Type.ToString(), oldT.Tags, oldT.Note);
-                _moneyLog.EditTransaction(id, newT.Timestamp, newT.Type, newT.Amount, newT.Tags, newT.Note);
+                var newT = ReadTransaction(oldT.Date.ToString(), oldT.Amount.ToString(), oldT.Type.ToString(), oldT.Tags, oldT.Note);
+                _moneyLog.EditTransaction(id, newT.Timestamp, newT.Type, newT.Amount, newT.Note, newT.Tags);
                 
                 WriteLine("Done.");
             }
@@ -194,16 +194,16 @@ namespace MoneylogUI
         
         private void DropQueue()
         {
-            WriteLine("*** DROPPING QUEUE ***");
+            WriteLine("*** DROPPING STAGED TRANSACTIONS ***");
             WriteLine();
 
-            var uncommitedTransactions = _moneyLog.GetPendingTransactions();
+            var stagedTransactions = _moneyLog.GetStagedTransactions();
 
-            if (uncommitedTransactions?.Count() > 0)
+            if (stagedTransactions?.Count() > 0)
             {
-                WriteLine($"Are you sure you want to drop following {uncommitedTransactions.Count()} transactions:");
+                WriteLine($"Are you sure you want to drop following {stagedTransactions.Count()} transactions:");
 
-                foreach (var t in uncommitedTransactions)
+                foreach (var t in stagedTransactions)
                     WriteLine(t);
                 
                 Write("Y/N [N]: ");
@@ -211,7 +211,7 @@ namespace MoneylogUI
 
                 if (input.ToUpper() == "Y")
                 {
-                    _moneyLog.DropQueue();
+                    _moneyLog.UnstageAllTransactions();
                     WriteLine("Done.");
                 }
                 else
@@ -221,22 +221,22 @@ namespace MoneylogUI
             }
             else
             {
-                WriteLine("There are no pending transactions.");
+                WriteLine("There are no staged transactions.");
             }
         }
 
         private void CommitTransactions()
         {
-            WriteLine("*** COMMITTING QUEUE ***");
+            WriteLine("*** COMMITTING STAGED TRANSACTIONS ***");
             WriteLine();
             
-            var uncommittedTransactions = _moneyLog.GetPendingTransactions();
+            var stagedTransactions = _moneyLog.GetStagedTransactions();
 
-            if (uncommittedTransactions.Count() > 0)
+            if (stagedTransactions.Count() > 0)
             {
-                WriteLine($"Are you sure you want to commit following {uncommittedTransactions.Count()} transactions:");
+                WriteLine($"Are you sure you want to commit following {stagedTransactions.Count()} transactions:");
 
-                foreach (var t in uncommittedTransactions)
+                foreach (var t in stagedTransactions)
                     WriteLine(t);
                 
                 Write("Y/N [Y]: ");
@@ -255,10 +255,9 @@ namespace MoneylogUI
             }
             else
             {
-                WriteLine("No pending transactions to commit.");
+                WriteLine("No staged transactions to commit.");
             }
         }
-
 
         private Transaction ReadTransaction(string dDate = null, string dAmount = null, string dType = null, string dTags = null,
             string dNote = null)
@@ -359,11 +358,11 @@ namespace MoneylogUI
         
         private void PrintPendingTransactionsNotice()
         {
-            var pending = _moneyLog.GetPendingTransactions();
+            var pending = _moneyLog.GetStagedTransactions();
             if (pending?.Count() > 0)
-                WriteLine($"{pending.Count()} uncommitted transactions.");
+                WriteLine($"{pending.Count()} staged transactions.");
             else
-                WriteLine("No pending transactions.");
+                WriteLine("No staged transactions.");
         }
 
         private void PrintSplash()
@@ -375,8 +374,9 @@ namespace MoneylogUI
             WriteLine("\te - edit transaction.");
             WriteLine("\tr - remove transaction.");
             WriteLine("\tq - query transactions.");
-            WriteLine("\td - drop pending transaction queue.");
-            WriteLine("\tc - commit pending transactions.");
+            WriteLine("\td - drop staged transactions.");
+            WriteLine("\tc - commit staged transactions.");
+            WriteLine("\ti - generate a report.");
             WriteLine();
         }
         

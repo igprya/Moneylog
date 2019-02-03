@@ -1,5 +1,4 @@
 ﻿using MoneylogLib;
-using MoneylogLib.Helpers;
 
 namespace MoneylogUI
 {

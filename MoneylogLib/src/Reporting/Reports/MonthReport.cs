@@ -27,8 +27,8 @@ namespace MoneylogLib.Reporting.Reports
             StartDate = new DateTime(date.Year, date.Month, 1);
             EndDate = StartDate.AddMonths(1).AddDays(-1);
 
-            var monthTransactions = transactions.Where(t => t.Timestamp >= StartDate && t.Timestamp <= EndDate);
-            var days = monthTransactions.Select(t => t.Timestamp).Distinct(new DateTimeDayEqualityComparer()).ToList();
+            var monthTransactions = transactions.Where(t => t.Date >= StartDate && t.Date <= EndDate);
+            var days = monthTransactions.Select(t => t.Date).Distinct(new DateTimeDayEqualityComparer()).ToList();
 
             foreach (var d in days)
             {

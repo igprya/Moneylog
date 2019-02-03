@@ -28,8 +28,8 @@ namespace MoneylogLib.Reporting.Reports
             StartDate = new DateTime(date.Year, 1, 1);
             EndDate = StartDate.AddYears(1).AddDays(-1);
 
-            var yearTransactions = transactions.Where(t => t.Timestamp >= StartDate && t.Timestamp <= EndDate);
-            var months = yearTransactions.Select(t => t.Timestamp).Distinct(new DateTimeMonthEqualityComparer()).ToList();
+            var yearTransactions = transactions.Where(t => t.Date >= StartDate && t.Date <= EndDate);
+            var months = yearTransactions.Select(t => t.Date).Distinct(new DateTimeMonthEqualityComparer()).ToList();
 
             foreach (var m in months)
             {

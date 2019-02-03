@@ -7,12 +7,12 @@ using Newtonsoft.Json;
 
 namespace MoneylogLib.StorageProviders
 {
-    internal class JsonTransactionStorageProvider : ITransactionStorageProvider
+    internal class JsonStorageProvider : ITransactionStorageProvider
     {
        private Dictionary<int, Transaction> _transactionStorage = new Dictionary<int, Transaction>();
        private readonly string _storageFilePath;
        
-        public JsonTransactionStorageProvider(string storageFilePath)
+        public JsonStorageProvider(string storageFilePath)
         {
             _storageFilePath = storageFilePath;
             ReadStorage();            
@@ -23,7 +23,7 @@ namespace MoneylogLib.StorageProviders
             return _transactionStorage.Count > 0 ? _transactionStorage.Values : null;
         }
 
-        public IEnumerable<Transaction> GetPending()
+        public IEnumerable<Transaction> GetStaged()
         {
             return _transactionStorage.Count > 0 ? _transactionStorage.Values.Where(t => t.Committed == false) : null;
         }
@@ -33,15 +33,15 @@ namespace MoneylogLib.StorageProviders
             return _transactionStorage.ContainsKey(id) ? _transactionStorage[id] : null;
         }
 
-        public Transaction Edit(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount, string newTags = null, 
-            string newNote = null)
+        public Transaction Edit(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount, 
+            string newNote = null, string newTags = null)
         {
             var transaction = Get(transactionId);
 
             if (transaction != null)
             {
                 transaction.Committed = false;
-                transaction.Timestamp = newTimeStamp;
+                transaction.Date = newTimeStamp;
                 transaction.Type = newType;
                 transaction.Amount = newAmount;
                 transaction.Tags = newTags;
@@ -73,22 +73,23 @@ namespace MoneylogLib.StorageProviders
             }
         }    
         
-        public int Enqueue(Transaction transaction)
+        public int Stage(Transaction transaction)
         {
             int transactionId = GetNewId();
             transaction.Id = transactionId;
+            transaction.Committed = false;
             
             _transactionStorage.Add(transactionId, transaction);
             
             return transactionId;
         }
         
-        public void DropQueue()
+        public void UnstageAll()
         {
-            var uncommittedTransactionIds = _transactionStorage.Where(t => !t.Value.Committed && !t.Value.Deleted).Select(t => t.Key).ToArray();
+            var stagedTransactions = _transactionStorage.Where(t => !t.Value.Committed && !t.Value.Deleted).Select(t => t.Key).ToArray();
             var deletedTransactions = _transactionStorage.Where(t => !t.Value.Committed && t.Value.Deleted).Select(t => t.Value).ToArray();
 
-            foreach (var id in uncommittedTransactionIds)
+            foreach (var id in stagedTransactions)
             {
                 _transactionStorage.Remove(id);
             }
@@ -100,7 +101,7 @@ namespace MoneylogLib.StorageProviders
             }
         }
         
-        public void Commit()
+        public void CommitAll()
         {
             var deletedTransactionIds = _transactionStorage.Where(t => !t.Value.Committed && t.Value.Deleted).Select(t => t.Key).ToArray();
             foreach (var id in deletedTransactionIds)

@@ -21,7 +21,7 @@ namespace MoneylogLib.Reporting.Reports
 
         private void Generate(List<Transaction> transactions, DateTime day)
         {
-            var items = transactions.Where(t => t.Timestamp.Date == day.Date).ToList();
+            var items = transactions.Where(t => t.Date.Date == day.Date).ToList();
 
             StartDate = day;
             EndDate = day;

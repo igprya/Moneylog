@@ -5,12 +5,11 @@ namespace MoneylogLib.Models
     public class Transaction : ITransaction
     {
         public int? Id { get; set; }
-        public DateTime Timestamp { get; set; }
+        public DateTime Date { get; set; }
         public TransactionType Type { get; set; }
         public decimal Amount { get; set; }
         public string Note { get; set; }
         public string Tags { get; set; }
-        public DateTime CreatedTimestampUtc { get; set; }
 
         [NonSerialized] public bool Committed = false;
         [NonSerialized] public bool Deleted = false;
@@ -20,17 +19,16 @@ namespace MoneylogLib.Models
         public Transaction(ITransaction transaction)
         {
             Id = transaction.Id;
-            Timestamp = transaction.Timestamp;
+            Date = transaction.Date;
             Type = transaction.Type;
             Amount = transaction.Amount;
             Note = transaction.Note;
             Tags = transaction.Tags;
-            CreatedTimestampUtc = transaction.CreatedTimestampUtc;
         }
 
         public override string ToString()
         {
-            return $"{Id}\t{Timestamp}\t{Type}\t{Amount}\t{Note}\t{Tags}";
+            return $"{Id}\t{Date}\t{Type}\t{Amount}\t{Note}\t{Tags}";
         }
     }
 }

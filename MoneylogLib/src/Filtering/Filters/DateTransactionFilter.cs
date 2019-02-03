@@ -4,8 +4,10 @@ namespace MoneylogLib.Filtering.Filters
 {
     internal class DateTransactionFilter : TransactionFilter<DateTime>
     {
-        public DateTransactionFilter(string propertyName, DateTime filteringValue, ComparisonOperation comparisonOperation, ChainingMode chainingMode)
-            : base(propertyName, filteringValue, comparisonOperation, chainingMode)
+        private static string PropertyName = "Date";
+        
+        public DateTransactionFilter(DateTime filteringValue, ComparisonOperation comparisonOperation, ChainingMode chainingMode)
+            : base(PropertyName, filteringValue, comparisonOperation, chainingMode)
         {
         }
         
