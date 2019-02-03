@@ -109,7 +109,7 @@ namespace MoneylogLib.StorageProviders
                 _transactionStorage.Remove(id);
             }
 
-            var transactionList = _transactionStorage.Values.ToList();
+            var transactionList = _transactionStorage.Values.OrderBy(t => t.Date).ToList();
 
             try
             {
