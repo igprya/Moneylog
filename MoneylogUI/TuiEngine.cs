@@ -62,7 +62,7 @@ namespace MoneylogUI
                             CommitTransactions();
                             break;
                         case "i":
-                            GenerateRepot();
+                            GenerateReport();
                             break;
                         default:
                             AddTransaction();
@@ -77,14 +77,17 @@ namespace MoneylogUI
             } while (input != "x");
         }
 
-        private void GenerateRepot()
+        private void GenerateReport()
         {
             WriteLine("*** REPORTING ***");
             WriteLine();
 
-            var startDate = Read<DateTime>("start date", DateTime.Now.ToString());
-            var reportType = Read<ReportType>("report type", ReportType.Month.ToString());
+            var reportType = Read<ReportType>("report type", ReportType.Total.ToString());
+            var startDate = DateTime.Now.AddDays(-1);
             var endDate = DateTime.Now;
+            
+            if (reportType != ReportType.Total)
+                startDate = Read<DateTime>("start date", DateTime.Now.ToString());
 
             if (reportType == ReportType.RangeDaily)
                 endDate = Read<DateTime>("range end date", DateTime.Now.AddMonths(1).ToString());
@@ -174,7 +177,7 @@ namespace MoneylogUI
             Write("Query [all]: ");
             string query = ReadLine();
 
-            var transactions = _moneyLog.GetTransactions(query);
+            var transactions = _moneyLog.GetTransactions(query).ToList();
 
             foreach (var t in transactions)
                 WriteLine(t);
@@ -197,9 +200,9 @@ namespace MoneylogUI
             WriteLine("*** DROPPING STAGED TRANSACTIONS ***");
             WriteLine();
 
-            var stagedTransactions = _moneyLog.GetStagedTransactions();
+            var stagedTransactions = _moneyLog.GetStagedTransactions().ToList();
 
-            if (stagedTransactions?.Count() > 0)
+            if (stagedTransactions.Any())
             {
                 WriteLine($"Are you sure you want to drop following {stagedTransactions.Count()} transactions:");
 
@@ -230,9 +233,9 @@ namespace MoneylogUI
             WriteLine("*** COMMITTING STAGED TRANSACTIONS ***");
             WriteLine();
             
-            var stagedTransactions = _moneyLog.GetStagedTransactions();
+            var stagedTransactions = _moneyLog.GetStagedTransactions().ToList();
 
-            if (stagedTransactions.Count() > 0)
+            if (stagedTransactions.Any())
             {
                 WriteLine($"Are you sure you want to commit following {stagedTransactions.Count()} transactions:");
 
@@ -358,7 +361,7 @@ namespace MoneylogUI
         
         private void PrintPendingTransactionsNotice()
         {
-            var pending = _moneyLog.GetStagedTransactions();
+            var pending = _moneyLog.GetStagedTransactions().ToList();
             if (pending?.Count() > 0)
                 WriteLine($"{pending.Count()} staged transactions.");
             else

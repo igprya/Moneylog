@@ -20,6 +20,7 @@ namespace MoneylogLib.Reporting
                 case ReportType.Month :         return new MonthReport(transactions, startDate);
                 case ReportType.Year:           return new YearReport(transactions, startDate);
                 case ReportType.RangeDaily :    return new RangeDailyReport(transactions, startDate, endDate);
+                case ReportType.Total:          return new TotalReport(transactions);
             }
             
             throw new InvalidOperationException("Unable to determine report type.");
