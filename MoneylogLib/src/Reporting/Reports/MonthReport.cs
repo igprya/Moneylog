@@ -22,7 +22,7 @@ namespace MoneylogLib.Reporting.Reports
 
         private void Generate(List<Transaction> transactions, DateTime date)
         {
-            Subreports = new List<Report>();
+            Subreports = new List<IReport>();
             
             StartDate = new DateTime(date.Year, date.Month, 1);
             EndDate = StartDate.AddMonths(1).AddDays(-1);

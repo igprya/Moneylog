@@ -211,11 +211,12 @@
     <Compile Include="src\Filtering\FilteringQueryParser.cs" />
     <Compile Include="src\Filtering\TransactionFilter.cs" />
     <Compile Include="src\Filtering\Filter.cs" />
-    <Compile Include="src\Models\ITransaction.cs" />
+    <Compile Include="src\IReport.cs" />
+    <Compile Include="src\ITransaction.cs" />
     <Compile Include="src\Models\Transaction.cs" />
     <Compile Include="src\Models\TransactionType.cs" />
     <Compile Include="src\Moneylog.cs" />
-    <Compile Include="src\MoneylogSettings.cs" />
+    <Compile Include="src\Settings.cs" />
     <Compile Include="src\Reporting\Comparers\DateTimeDayEqualityComparer.cs" />
     <Compile Include="src\Reporting\Comparers\DateTimeMonthEqualityComparer.cs" />
     <Compile Include="src\Reporting\Comparers\DateTimeYearEqualityComparer.cs" />

@@ -26,7 +26,7 @@ namespace MoneylogLib.Reporting.Reports
 
         private void Generate(List<Transaction> transactions, DateTime startDate, DateTime endDate)
         {
-            Subreports = new List<Report>();
+            Subreports = new List<IReport>();
             
             StartDate = startDate;
             EndDate = endDate;

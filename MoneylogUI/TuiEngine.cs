@@ -310,7 +310,7 @@ namespace MoneylogUI
             }
         }
 
-        private void PrintReport(Report report, string filteringQuery)
+        private void PrintReport(IReport report, string filteringQuery)
         {
             WriteLine();
             WriteLine($"{report.Type} report for {report.StartDate.ToShortDateString()} - {report.EndDate.ToShortDateString()} period.");

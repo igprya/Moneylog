@@ -10,10 +10,10 @@ namespace MoneylogLib
 {
     public class Moneylog
     {
-        private readonly MoneylogSettings _settings;
+        private readonly Settings _settings;
         private readonly TransactionController _transactionController;
 
-        public Moneylog(MoneylogSettings settings)
+        public Moneylog(Settings settings)
         {
             _settings = settings;
             _transactionController = new TransactionController( new JsonStorageProvider(_settings.StorageFilePath) );
@@ -65,7 +65,7 @@ namespace MoneylogLib
             return _transactionController.CommitAll();
         }
 
-        public Report GenerateReport(ReportType type, DateTime startDate, DateTime endDate, string filteringQuery)
+        public IReport GenerateReport(ReportType type, DateTime startDate, DateTime endDate, string filteringQuery)
         {
             var transactions = _transactionController.GetAllTransactions();
             

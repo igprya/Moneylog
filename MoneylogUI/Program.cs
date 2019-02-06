@@ -6,7 +6,7 @@ namespace MoneylogUI
     {
         public static void Main(string[] args)
         {
-            var moneylog = new Moneylog(new MoneylogSettings());
+            var moneylog = new Moneylog(new Settings());
             var ui = new TuiEngine(moneylog);
 
             ui.Run();

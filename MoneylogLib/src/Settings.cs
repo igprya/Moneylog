@@ -1,6 +1,6 @@
 namespace MoneylogLib
 {
-    public class MoneylogSettings
+    public class Settings
     {
         public string StorageFilePath = @".\transactions.json";
     }

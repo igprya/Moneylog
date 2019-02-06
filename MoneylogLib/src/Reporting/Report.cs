@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace MoneylogLib.Reporting
 {
-    public abstract class Report
+    internal abstract class Report : IReport
     {
-        public List<Report> Subreports { get; protected set; }
+        public List<IReport> Subreports { get; protected set; }
         public DateTime StartDate { get; protected set; }
         public DateTime EndDate { get; protected set; }
         public decimal Income { get; protected set; }

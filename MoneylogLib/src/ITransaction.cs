@@ -1,6 +1,7 @@
 using System;
+using MoneylogLib.Models;
 
-namespace MoneylogLib.Models
+namespace MoneylogLib
 {
     public interface ITransaction
     {

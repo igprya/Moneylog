@@ -22,7 +22,7 @@ namespace MoneylogLib.Reporting.Reports
     
         private void Generate(List<Transaction> transactions)
         {
-            Subreports = new List<Report>();
+            Subreports = new List<IReport>();
 
             var orderedTransactions = transactions.OrderBy(t => t.Date).ToList();
             var firstTransaction = orderedTransactions.First().Date;
