@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using MoneylogLib;
 using MoneylogLib.Models;
 using MoneylogLib.Reporting;
@@ -28,15 +29,15 @@ namespace MoneylogUI
             _moneyLog = moneylog;
         }
 
-        public void Run()
+        public async Task Run()
         {
             string input;
-            
+           
             PrintSplash();
 
             do
             {
-                PrintPendingTransactionsNotice();
+                await PrintPendingTransactionsNotice();
                 input = Prompt();
 
                 try
@@ -44,28 +45,28 @@ namespace MoneylogUI
                     switch (input)
                     {
                         case "a":
-                            AddTransaction();
+                            await AddTransaction();
                             break;
                         case "e":
-                            EditTransaction();
+                            await EditTransaction();
                             break;
                         case "r":
-                            RemoveTransaction();
+                            await RemoveTransaction();
                             break;
                         case "q":
-                            Query();
+                            await Query();
                             break;
                         case "d":
-                            DropQueue();
+                            await DropQueue();
                             break;
                         case "c": 
-                            CommitTransactions();
+                            await CommitTransactions();
                             break;
                         case "i":
-                            GenerateReport();
+                            await GenerateReport();
                             break;
                         default:
-                            AddTransaction();
+                            await AddTransaction();
                             break;
                     }
                 }
@@ -77,7 +78,7 @@ namespace MoneylogUI
             } while (input != "x");
         }
 
-        private void GenerateReport()
+        private async Task GenerateReport()
         {
             WriteLine("*** REPORTING ***");
             WriteLine();
@@ -93,32 +94,32 @@ namespace MoneylogUI
                 endDate = Read<DateTime>("range end date", DateTime.Now.AddMonths(1).ToString());
 
             var filteringQuery = Read<string>("filtering query", "");
-            var report = _moneyLog.GenerateReport(reportType, startDate, endDate, filteringQuery);
+            var report = await _moneyLog.GenerateReport(reportType, startDate, endDate, filteringQuery);
             
             PrintReport(report, filteringQuery);
             
             WriteLine("Done.");
         }
 
-        private void AddTransaction()
+        private async Task AddTransaction()
         {
             WriteLine("*** ADDING TRANSACTION ***");
             WriteLine();
             
             var t = ReadTransaction();
-            _moneyLog.AddTransaction(t.Timestamp, t.Type, t.Amount, t.Note, t.Tags);
+            await _moneyLog.AddTransaction(t.Timestamp, t.Type, t.Amount, t.Note, t.Tags);
             
             WriteLine("Done.");
         }
         
-        private void EditTransaction()
+        private async Task EditTransaction()
         {
             WriteLine("*** EDITING TRANSACTION ***");
             WriteLine();
             
             var id = Read<int>("transaction Id", "0");
 
-            var oldT = _moneyLog.GetTransaction(id);
+            var oldT = await _moneyLog.GetTransaction(id);
 
             if (oldT != null)
             {
@@ -127,7 +128,7 @@ namespace MoneylogUI
                 
                 WriteLine("Enter new values");
                 var newT = ReadTransaction(oldT.Date.ToString(), oldT.Amount.ToString(), oldT.Type.ToString(), oldT.Tags, oldT.Note);
-                _moneyLog.EditTransaction(id, newT.Timestamp, newT.Type, newT.Amount, newT.Note, newT.Tags);
+                await _moneyLog.EditTransaction(id, newT.Timestamp, newT.Type, newT.Amount, newT.Note, newT.Tags);
                 
                 WriteLine("Done.");
             }
@@ -137,7 +138,7 @@ namespace MoneylogUI
             }
         }
 
-        private void RemoveTransaction()
+        private async Task RemoveTransaction()
         {
             WriteLine("*** REMOVING TRANSACTION ***");
             WriteLine();
@@ -155,7 +156,7 @@ namespace MoneylogUI
 
                 if (input.ToUpper() == "Y")
                 {
-                    _moneyLog.RemoveTransaction(id);
+                    await _moneyLog.RemoveTransaction(id);
                     WriteLine("Done.");
                 }
                 else
@@ -169,7 +170,7 @@ namespace MoneylogUI
             }
         }
         
-        private void Query()
+        private async Task Query()
         {
             WriteLine("*** QUERYING ***");
             WriteLine();
@@ -177,7 +178,7 @@ namespace MoneylogUI
             Write("Query [all]: ");
             string query = ReadLine();
 
-            var transactions = _moneyLog.GetTransactions(query).ToList();
+            var transactions = (await _moneyLog.GetTransactions(query)).ToList();
 
             foreach (var t in transactions)
                 WriteLine(t);
@@ -195,12 +196,12 @@ namespace MoneylogUI
             WriteLine("Done.");
         }
         
-        private void DropQueue()
+        private async Task DropQueue()
         {
             WriteLine("*** DROPPING STAGED TRANSACTIONS ***");
             WriteLine();
 
-            var stagedTransactions = _moneyLog.GetStagedTransactions().ToList();
+            var stagedTransactions = (await _moneyLog.GetStagedTransactions()).ToList();
 
             if (stagedTransactions.Any())
             {
@@ -214,7 +215,7 @@ namespace MoneylogUI
 
                 if (input.ToUpper() == "Y")
                 {
-                    _moneyLog.UnstageAllTransactions();
+                    await _moneyLog.UnstageAllTransactions();
                     WriteLine("Done.");
                 }
                 else
@@ -228,12 +229,12 @@ namespace MoneylogUI
             }
         }
 
-        private void CommitTransactions()
+        private async Task CommitTransactions()
         {
             WriteLine("*** COMMITTING STAGED TRANSACTIONS ***");
             WriteLine();
             
-            var stagedTransactions = _moneyLog.GetStagedTransactions().ToList();
+            var stagedTransactions = (await _moneyLog.GetStagedTransactions()).ToList();
 
             if (stagedTransactions.Any())
             {
@@ -247,7 +248,7 @@ namespace MoneylogUI
 
                 if (input.ToUpper() != "N")
                 {
-                    _moneyLog.CommitTransactions();
+                    await _moneyLog.CommitTransactions();
                     WriteLine("Done.");
                 }
                 else
@@ -359,9 +360,9 @@ namespace MoneylogUI
             return input;
         }
         
-        private void PrintPendingTransactionsNotice()
+        private async Task PrintPendingTransactionsNotice()
         {
-            var pending = _moneyLog.GetStagedTransactions().ToList();
+            var pending = (await _moneyLog.GetStagedTransactions()).ToList();
             if (pending?.Count() > 0)
                 WriteLine($"{pending.Count()} staged transactions.");
             else

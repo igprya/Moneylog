@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MoneylogLib.Controllers;
 using MoneylogLib.Models;
 using MoneylogLib.Filtering;
@@ -19,61 +21,70 @@ namespace MoneylogLib
             _transactionController = new TransactionController( new JsonStorageProvider(_settings.StorageFilePath) );
         }
 
-        public void AddTransaction(DateTime timeStamp, TransactionType type, decimal amount, string note = null, string tags = null)
+        public Task AddTransaction(DateTime timeStamp, TransactionType type, decimal amount, string note = null, string tags = null)
         {
-            _transactionController.Create(timeStamp, type, amount, note, tags);
+            return Task.Run(() => { _transactionController.Create(timeStamp, type, amount, note, tags); });
         }
         
-        public ITransaction EditTransaction(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount, 
+        public Task<ITransaction> EditTransaction(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount, 
             string newNote = null, string newTags = null)
         {
-            return _transactionController.Edit(transactionId, newTimeStamp, newType, newAmount, newNote, newTags);
+            return Task.Run(() => (_transactionController.Edit(transactionId, newTimeStamp, newType, newAmount, newNote, newTags) as ITransaction));
         }
 
-        public IEnumerable<ITransaction> GetTransactions(string filteringQuery = null)
+        public Task<IEnumerable<ITransaction>> GetTransactions(string filteringQuery = null)
         {
-            var result = _transactionController.GetAllTransactions();
+            return Task<IEnumerable<ITransaction>>.Run(() => {             
+                    
+                    var result = _transactionController.GetAllTransactions();
 
-            if (!string.IsNullOrEmpty(filteringQuery))
-                result = Filter.ExecuteQuery(result, filteringQuery);
+                    if (!string.IsNullOrEmpty(filteringQuery))
+                        result = Filter.ExecuteQuery(result, filteringQuery);
 
-            return result;
+                    return result as IEnumerable<ITransaction>;
+                }
+            );
         }
 
-        public ITransaction GetTransaction(int transactionId)
+        public Task<ITransaction> GetTransaction(int transactionId)
         {
-            return _transactionController.GetTransaction(transactionId);
+            return Task<ITransaction>.Run(() => _transactionController.GetTransaction(transactionId) as ITransaction);
         }
 
-        public void RemoveTransaction(int transactionId)
+        public Task RemoveTransaction(int transactionId)
         {
-            _transactionController.Remove(transactionId);
-        }
-        
-        public IEnumerable<ITransaction> GetStagedTransactions()
-        {
-            return _transactionController.GetStagedTransactions();
-        }
-
-        public IEnumerable<ITransaction> UnstageAllTransactions()
-        {
-            return _transactionController.UnstageAll();
+            return Task.Run(() => _transactionController.Remove(transactionId));
         }
         
-        public IEnumerable<ITransaction> CommitTransactions()
+        public Task<IEnumerable<ITransaction>> GetStagedTransactions()
         {
-            return _transactionController.CommitAll();
+            return Task<IEnumerable<ITransaction>>.Run(() => _transactionController.GetStagedTransactions() as IEnumerable<ITransaction>);
         }
 
-        public IReport GenerateReport(ReportType type, DateTime startDate, DateTime endDate, string filteringQuery)
+        public Task<IEnumerable<ITransaction>> UnstageAllTransactions()
         {
-            var transactions = _transactionController.GetAllTransactions();
+            return Task<IEnumerable<ITransaction>>.Run(() => _transactionController.UnstageAll() as IEnumerable<ITransaction>);
+        }
+        
+        public Task<IEnumerable<ITransaction>> CommitTransactions()
+        {
+            return Task<IEnumerable<ITransaction>>.Run(() => _transactionController.CommitAll() as IEnumerable<ITransaction>);
+        }
+
+        public Task<IReport> GenerateReport(ReportType type, DateTime startDate, DateTime endDate, string filteringQuery)
+        {
+            return Task<IReport>.Run(() =>
+            {
+                var transactions = _transactionController.GetAllTransactions();
             
-            return ReportGenerator.CreateReport(type,
-                transactions,
-                startDate,
-                endDate,
-                filteringQuery);
+                var report = ReportGenerator.CreateReport(type,
+                    transactions,
+                    startDate,
+                    endDate,
+                    filteringQuery);
+                
+                return (IReport)report;
+            });
         }
     }
 }
