@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Filtering.Helpers
+namespace MoneylogLib.Filtering.Comparers
 {
     internal class TransactionTypeComparer : IComparer<Transaction>
     {

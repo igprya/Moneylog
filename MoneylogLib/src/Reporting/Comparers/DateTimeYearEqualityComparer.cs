@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace MoneylogLib.Reporting.Helpers
+namespace MoneylogLib.Reporting.Comparers
 {
     internal class DateTimeYearEqualityComparer : IEqualityComparer<DateTime>
     {

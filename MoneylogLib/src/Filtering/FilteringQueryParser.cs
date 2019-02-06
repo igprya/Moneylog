@@ -5,9 +5,9 @@ using System.Text.RegularExpressions;
 using MoneylogLib.Filtering.Filters;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Filtering.Helpers
+namespace MoneylogLib.Filtering
 {
-    internal static class QueryParser
+    internal static class FilteringQueryParser
     {
         private class QueryElements
         {

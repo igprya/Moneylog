@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MoneylogLib.Filtering.Helpers;
+using MoneylogLib.Filtering.Comparers;
 using MoneylogLib.Models;
 
 namespace MoneylogLib.Filtering.Filters

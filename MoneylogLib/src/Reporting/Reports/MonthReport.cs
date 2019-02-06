@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MoneylogLib.Models;
-using MoneylogLib.Reporting.Helpers;
+using MoneylogLib.Reporting.Comparers;
 
 namespace MoneylogLib.Reporting.Reports
 {

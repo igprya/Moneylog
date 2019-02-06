@@ -2,25 +2,25 @@ using System;
 using System.Collections.Generic;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.Filtering.Helpers
+namespace MoneylogLib.Filtering.Comparers
 {
-    internal class TransactionNoteComparer : IComparer<Transaction>
+    internal class TransactionTagsComparer : IComparer<Transaction>
     {
         public int Compare(Transaction x, Transaction y)
         {
             if (x == null || y == null)
                 throw new NullReferenceException("Unable to compare Transaction to null.");
-        
-            if (x.Note == null && x.Note == null)
+            
+            if (x.Tags == null && y.Tags == null)
                 return 0;
             
-            if (x.Note == null)
+            if (x.Tags == null)
                 return -1;
 
-            if (y.Note == null)
+            if (x.Tags == null)
                 return 1;
             
-            return String.Compare(x.Note, y.Note, StringComparison.Ordinal);
+            return String.Compare(x.Tags, y.Tags, StringComparison.Ordinal);
         }
     }
 }

@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using MoneylogLib.Models;
 
-namespace MoneylogLib.StorageProviders
+namespace MoneylogLib.Providers
 {
-    internal interface ITransactionStorageProvider
+    internal interface IStorageProvider
     {
         
         IEnumerable<Transaction> GetAll();

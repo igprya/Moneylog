@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using MoneylogLib.Controllers;
 using MoneylogLib.Models;
-using MoneylogLib.StorageProviders;
 using MoneylogLib.Filtering;
+using MoneylogLib.Providers;
 using MoneylogLib.Reporting;
 
 namespace MoneylogLib

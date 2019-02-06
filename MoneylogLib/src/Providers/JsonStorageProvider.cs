@@ -5,9 +5,9 @@ using System.Linq;
 using MoneylogLib.Models;
 using Newtonsoft.Json;
 
-namespace MoneylogLib.StorageProviders
+namespace MoneylogLib.Providers
 {
-    internal class JsonStorageProvider : ITransactionStorageProvider
+    internal class JsonStorageProvider : IStorageProvider
     {
        private Dictionary<int, Transaction> _transactionStorage = new Dictionary<int, Transaction>();
        private readonly string _storageFilePath;

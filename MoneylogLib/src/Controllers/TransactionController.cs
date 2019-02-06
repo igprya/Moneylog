@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MoneylogLib.Models;
-using MoneylogLib.StorageProviders;
+using MoneylogLib.Providers;
 
-namespace MoneylogLib
+namespace MoneylogLib.Controllers
 {
     internal class TransactionController
     {
-        private readonly ITransactionStorageProvider _transactionStorage;
+        private readonly IStorageProvider _transactionStorage;
 
-        public TransactionController(ITransactionStorageProvider transactionStorageProvider)
+        public TransactionController(IStorageProvider transactionStorageProvider)
         {
             _transactionStorage = transactionStorageProvider;
         }

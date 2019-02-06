@@ -191,16 +191,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Controllers\TransactionController.cs" />
     <Compile Include="src\Filtering\FilterChainingMode.cs" />
     <Compile Include="src\Filtering\ComparisonOperation.cs" />
     <Compile Include="src\Filtering\Filters\OrderingFilter.cs" />
-    <Compile Include="src\Filtering\Helpers\QueryParser.cs" />
-    <Compile Include="src\Filtering\Helpers\TransactionAmountComparer.cs" />
-    <Compile Include="src\Filtering\Helpers\TransactionDateComparer.cs" />
-    <Compile Include="src\Filtering\Helpers\TransactionIdComparer.cs" />
-    <Compile Include="src\Filtering\Helpers\TransactionNoteComparer.cs" />
-    <Compile Include="src\Filtering\Helpers\TransactionTagsComparer.cs" />
-    <Compile Include="src\Filtering\Helpers\TransactionTypeComparer.cs" />
+    <Compile Include="src\Filtering\Comparers\TransactionAmountComparer.cs" />
+    <Compile Include="src\Filtering\Comparers\TransactionDateComparer.cs" />
+    <Compile Include="src\Filtering\Comparers\TransactionIdComparer.cs" />
+    <Compile Include="src\Filtering\Comparers\TransactionNoteComparer.cs" />
+    <Compile Include="src\Filtering\Comparers\TransactionTagsComparer.cs" />
+    <Compile Include="src\Filtering\Comparers\TransactionTypeComparer.cs" />
     <Compile Include="src\Filtering\Filters\AmountTransactionFilter.cs" />
     <Compile Include="src\Filtering\Filters\IdTransactionFilter.cs" />
     <Compile Include="src\Filtering\Filters\NoteTransactionFilter.cs" />
@@ -208,6 +208,7 @@
     <Compile Include="src\Filtering\Filters\DateTransactionFilter.cs" />
     <Compile Include="src\Filtering\Filters\TypeTransactionFilter.cs" />
     <Compile Include="src\Filtering\ITransactionFilter.cs" />
+    <Compile Include="src\Filtering\FilteringQueryParser.cs" />
     <Compile Include="src\Filtering\TransactionFilter.cs" />
     <Compile Include="src\Filtering\Filter.cs" />
     <Compile Include="src\Models\ITransaction.cs" />
@@ -215,9 +216,9 @@
     <Compile Include="src\Models\TransactionType.cs" />
     <Compile Include="src\Moneylog.cs" />
     <Compile Include="src\MoneylogSettings.cs" />
-    <Compile Include="src\Reporting\Helpers\DateTimeDayEqualityComparer.cs" />
-    <Compile Include="src\Reporting\Helpers\DateTimeMonthEqualityComparer.cs" />
-    <Compile Include="src\Reporting\Helpers\DateTimeYearEqualityComparer.cs" />
+    <Compile Include="src\Reporting\Comparers\DateTimeDayEqualityComparer.cs" />
+    <Compile Include="src\Reporting\Comparers\DateTimeMonthEqualityComparer.cs" />
+    <Compile Include="src\Reporting\Comparers\DateTimeYearEqualityComparer.cs" />
     <Compile Include="src\Reporting\Report.cs" />
     <Compile Include="src\Reporting\ReportGenerator.cs" />
     <Compile Include="src\Reporting\Reports\DayReport.cs" />
@@ -226,9 +227,8 @@
     <Compile Include="src\Reporting\Reports\TotalReport.cs" />
     <Compile Include="src\Reporting\Reports\YearReport.cs" />
     <Compile Include="src\Reporting\ReportType.cs" />
-    <Compile Include="src\StorageProviders\ITransactionStorageProvider.cs" />
-    <Compile Include="src\StorageProviders\JsonStorageProvider.cs" />
-    <Compile Include="src\TransactionController.cs" />
+    <Compile Include="src\Providers\IStorageProvider.cs" />
+    <Compile Include="src\Providers\JsonStorageProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

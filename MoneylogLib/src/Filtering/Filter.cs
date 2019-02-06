@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using MoneylogLib.Filtering.Helpers;
 using MoneylogLib.Models;
 
 namespace MoneylogLib.Filtering
@@ -9,7 +8,7 @@ namespace MoneylogLib.Filtering
     {
         public static List<Transaction> ExecuteQuery(List<Transaction> transactions, string query)
         {
-            var filters = QueryParser.Parse(query);
+            var filters = FilteringQueryParser.Parse(query);
             return ApplyFilters(transactions, filters);
         }
         
