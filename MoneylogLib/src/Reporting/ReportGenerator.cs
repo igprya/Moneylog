@@ -6,7 +6,7 @@ using MoneylogLib.Reporting.Reports;
 
 namespace MoneylogLib.Reporting
 {
-    public static class ReportGenerator
+    internal static class ReportGenerator
     {
         public static Report CreateReport(ReportType reportType, List<Transaction> transactions, DateTime startDate, DateTime endDate
             , string filteringQuery)
