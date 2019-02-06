@@ -5,7 +5,7 @@ namespace MoneylogLib.Filtering
 {
     internal interface ITransactionFilter
     {
-        List<Transaction> Apply(IEnumerable<Transaction> transactions);
+        List<ITransaction> Apply(IEnumerable<ITransaction> transactions);
 
         ChainingMode ChainingMode { get; }
     }

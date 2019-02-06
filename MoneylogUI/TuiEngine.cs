@@ -180,8 +180,12 @@ namespace MoneylogUI
             var transactions = _moneyLog.GetTransactions(query).ToList();
 
             foreach (var t in transactions)
+            {
+                (t as MoneylogLib.Models.Transaction).Note = "Q U A C K";
                 WriteLine(t);
-            
+                
+            }
+
             decimal totalExpense = transactions.Where(t => t.Type == TransactionType.Expense).Sum(t => t.Amount);
             decimal totalIncome = transactions.Where(t => t.Type == TransactionType.Income).Sum(t => t.Amount);
             decimal balance = totalIncome - totalExpense;

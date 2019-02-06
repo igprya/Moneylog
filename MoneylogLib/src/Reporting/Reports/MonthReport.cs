@@ -8,7 +8,7 @@ namespace MoneylogLib.Reporting.Reports
 {
     internal class MonthReport : Report
     {
-        public MonthReport(List<Transaction> transactions, DateTime month)
+        public MonthReport(List<ITransaction> transactions, DateTime month)
             : base(ReportType.Month)
         {
             if (transactions == null)
@@ -20,7 +20,7 @@ namespace MoneylogLib.Reporting.Reports
             Generate(transactions, month);
         }
 
-        private void Generate(List<Transaction> transactions, DateTime date)
+        private void Generate(List<ITransaction> transactions, DateTime date)
         {
             Subreports = new List<Report>();
             

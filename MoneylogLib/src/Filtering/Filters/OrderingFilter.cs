@@ -20,10 +20,10 @@ namespace MoneylogLib.Filtering.Filters
             Ascending = direction == "ASC";
         }
 
-        public List<Transaction> Apply(IEnumerable<Transaction> transactions)
+        public List<ITransaction> Apply(IEnumerable<ITransaction> transactions)
         {
             var transactionList = transactions.ToList();
-            transactionList.Sort(GetComparer());
+            transactionList.Sort((IComparer<ITransaction>)GetComparer());
 
             if (!Ascending)
                 transactionList.Reverse();

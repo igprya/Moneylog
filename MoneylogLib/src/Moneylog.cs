@@ -35,7 +35,7 @@ namespace MoneylogLib
             var result = _transactionController.GetAllTransactions();
 
             if (!string.IsNullOrEmpty(filteringQuery))
-                result = Filter.ExecuteQuery(result, filteringQuery);
+                result = Filter.ExecuteQuery(result, filteringQuery).ConvertAll(c => (TransactionDto)c);
 
             return result;
         }
@@ -67,7 +67,7 @@ namespace MoneylogLib
 
         public Report GenerateReport(ReportType type, DateTime startDate, DateTime endDate, string filteringQuery)
         {
-            var transactions = _transactionController.GetAllTransactions();
+            IEnumerable<ITransaction> transactions = _transactionController.GetAllTransactions();
             
             return ReportGenerator.CreateReport(type,
                 transactions,

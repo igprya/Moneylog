@@ -20,9 +20,9 @@ namespace MoneylogLib.Filtering
             ChainingMode = chainingMode;
         }
 
-        public virtual List<Transaction> Apply(IEnumerable<Transaction> transactions)
+        public virtual List<ITransaction> Apply(IEnumerable<ITransaction> transactions)
         {
-            var result = new List<Transaction>();
+            var result = new List<ITransaction>();
 
             foreach (var transaction in transactions)
             {

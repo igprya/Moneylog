@@ -8,7 +8,7 @@ namespace MoneylogLib.Reporting.Reports
 {
     internal class RangeDailyReport : Report
     {
-        public RangeDailyReport(List<Transaction> transactions, DateTime startDate, DateTime endDate)
+        public RangeDailyReport(List<ITransaction> transactions, DateTime startDate, DateTime endDate)
             : base(ReportType.RangeDaily)
         {
             
@@ -24,7 +24,7 @@ namespace MoneylogLib.Reporting.Reports
             Generate(transactions, startDate, endDate);
         }
 
-        private void Generate(List<Transaction> transactions, DateTime startDate, DateTime endDate)
+        private void Generate(List<ITransaction> transactions, DateTime startDate, DateTime endDate)
         {
             Subreports = new List<Report>();
             

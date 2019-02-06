@@ -8,7 +8,7 @@ namespace MoneylogLib.Reporting.Reports
 {
     internal class TotalReport : Report
     {
-        public TotalReport(List<Transaction> transactions)
+        public TotalReport(List<ITransaction> transactions)
             : base(ReportType.Total)
         {
             if (transactions == null)
@@ -20,7 +20,7 @@ namespace MoneylogLib.Reporting.Reports
             Generate(transactions);
         }
     
-        private void Generate(List<Transaction> transactions)
+        private void Generate(List<ITransaction> transactions)
         {
             Subreports = new List<Report>();
 

@@ -213,6 +213,7 @@
     <Compile Include="src\Filtering\Filter.cs" />
     <Compile Include="src\Models\ITransaction.cs" />
     <Compile Include="src\Models\Transaction.cs" />
+    <Compile Include="src\Models\TransactionDto.cs" />
     <Compile Include="src\Models\TransactionType.cs" />
     <Compile Include="src\Moneylog.cs" />
     <Compile Include="src\MoneylogSettings.cs" />

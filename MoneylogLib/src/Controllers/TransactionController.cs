@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text.RegularExpressions;
 using MoneylogLib.Models;
 using MoneylogLib.Providers;
@@ -40,35 +41,35 @@ namespace MoneylogLib.Controllers
             return _transactionStorage.Get(transactionId);
         }
 
-        public List<Transaction> GetAllTransactions()
+        public List<TransactionDto> GetAllTransactions()
         {
-            return _transactionStorage.GetAll().ToList();
+            return _transactionStorage.GetAll().ToList().ConvertAll(t => (TransactionDto)t);
         }
 
-        public Transaction Edit(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount,
+        public TransactionDto Edit(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount,
             string newNote = null, string newTags = null)
         {
             return _transactionStorage.Edit(transactionId, newTimeStamp, newType, newAmount, newNote, newTags);
         }
         
-        public List<Transaction> Remove(int id)
+        public List<TransactionDto> Remove(int id)
         {
             _transactionStorage.Remove(id);
             return GetAllTransactions();
         }
 
-        public IEnumerable<Transaction> CommitAll()
+        public List<TransactionDto> CommitAll()
         {
             _transactionStorage.CommitAll();  
             return GetAllTransactions();
         }
 
-        public IEnumerable<Transaction> GetStagedTransactions()
+        public List<TransactionDto> GetStagedTransactions()
         {
-            return _transactionStorage.GetStaged();
+            return _transactionStorage.GetStaged().ToList().ConvertAll(t => (TransactionDto)t);
         }
         
-        public List<Transaction> UnstageAll()
+        public List<TransactionDto> UnstageAll()
         {
             _transactionStorage.UnstageAll();
             return GetAllTransactions();

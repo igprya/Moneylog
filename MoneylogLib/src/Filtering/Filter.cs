@@ -1,21 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MoneylogLib.Models;
 
 namespace MoneylogLib.Filtering
 {
     internal static class Filter
     {
-        public static List<Transaction> ExecuteQuery(List<Transaction> transactions, string query)
+        public static List<ITransaction> ExecuteQuery(IEnumerable<ITransaction> transactions, string query)
         {
             var filters = FilteringQueryParser.Parse(query);
             return ApplyFilters(transactions, filters);
         }
         
-        private static List<Transaction> ApplyFilters(List<Transaction> transactions, IEnumerable<ITransactionFilter> filters)
+        private static List<ITransaction> ApplyFilters(IEnumerable<ITransaction> transactions, IEnumerable<ITransactionFilter> filters)
         {
             if (transactions == null) throw new ArgumentNullException(nameof(transactions));
-            var result = transactions;
+            var result = transactions.ToList();
 
             foreach (var filter in filters)
             {
