@@ -20,16 +20,8 @@ namespace MoneylogLib.Controllers
         {
             if (tags != null)
                 tags = Regex.Replace(tags, @"\s+", "");
-            
-            var t = new Transaction
-            {
-                Date = timeStamp,
-                Type = type,
-                Amount = amount,
-                Note = note,
-                Tags = tags
-            };
 
+            var t = new Transaction(null, timeStamp, type, amount, note, tags);
             _transactionStorage.Stage(t);
 
             return t;
@@ -48,7 +40,8 @@ namespace MoneylogLib.Controllers
         public Transaction Edit(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount,
             string newNote = null, string newTags = null)
         {
-            return _transactionStorage.Edit(transactionId, newTimeStamp, newType, newAmount, newNote, newTags);
+            var t = new Transaction(transactionId, newTimeStamp, newType, newAmount, newNote, newTags);
+            return _transactionStorage.Edit(transactionId, t);
         }
         
         public List<Transaction> Remove(int id)
@@ -70,7 +63,7 @@ namespace MoneylogLib.Controllers
         
         public List<Transaction> UnstageAll()
         {
-            _transactionStorage.UnstageAll();
+            _transactionStorage.ClearStaged();
             return GetAllTransactions();
         }
     }

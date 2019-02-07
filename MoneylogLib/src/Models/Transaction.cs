@@ -1,20 +1,31 @@
 using System;
+using Newtonsoft.Json;
 
 namespace MoneylogLib.Models
 {
     internal class Transaction : ITransaction
     {
-        public int? Id { get; set; }
-        public DateTime Date { get; set; }
-        public TransactionType Type { get; set; }
-        public decimal Amount { get; set; }
-        public string Note { get; set; }
-        public string Tags { get; set; }
+        public int? Id { get; }
+        public DateTime Date { get; }
+        public TransactionType Type { get; }
+        public decimal Amount { get; }
+        public string Note { get; }
+        public string Tags { get; }
 
-        [NonSerialized] public bool Committed = false;
-        [NonSerialized] public bool Deleted = false;
-
-        public Transaction() { }
+        [JsonConstructor]
+        public Transaction(int id, DateTime date, TransactionType type, decimal amount, string note, string tags)
+            : this((int?)id, date, type, amount, note, tags)
+        {}
+        
+        public Transaction(int? id, DateTime date, TransactionType type, decimal amount, string note, string tags)
+        {
+            Id = id;
+            Date = date;
+            Type = type;
+            Amount = amount;
+            Note = note;
+            Tags = tags;
+        }
         
         public Transaction(ITransaction transaction)
         {

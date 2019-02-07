@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using MoneylogLib.Models;
 using Newtonsoft.Json;
 
@@ -10,6 +12,9 @@ namespace MoneylogLib.Providers
     internal class JsonStorageProvider : IStorageProvider
     {
        private Dictionary<int, Transaction> _transactionStorage = new Dictionary<int, Transaction>();
+       private readonly List<int> _stagedIds = new List<int>();
+       private readonly List<int> _deletedIds = new List<int>();
+       
        private readonly string _storageFilePath;
        
         public JsonStorageProvider(string storageFilePath)
@@ -25,7 +30,7 @@ namespace MoneylogLib.Providers
 
         public IEnumerable<Transaction> GetStaged()
         {
-            return _transactionStorage.Count > 0 ? _transactionStorage.Values.Where(t => t.Committed == false) : null;
+            return _transactionStorage.Count > 0 ? _transactionStorage.Values.Where(t => _stagedIds.Contains((int) t.Id)) : null;
         }
 
         public Transaction Get(int id)
@@ -33,81 +38,45 @@ namespace MoneylogLib.Providers
             return _transactionStorage.ContainsKey(id) ? _transactionStorage[id] : null;
         }
 
-        public Transaction Edit(int transactionId, DateTime newTimeStamp, TransactionType newType, decimal newAmount, 
-            string newNote = null, string newTags = null)
+        public Transaction Edit(int id, Transaction transaction)
         {
-            var transaction = Get(transactionId);
+            if (!_transactionStorage.ContainsKey(id))
+                throw new ArgumentException($"The transaction with an id {id} does not exist.");
 
-            if (transaction != null)
-            {
-                transaction.Committed = false;
-                transaction.Date = newTimeStamp;
-                transaction.Type = newType;
-                transaction.Amount = newAmount;
-                transaction.Tags = newTags;
-                transaction.Note = newNote;
-
-                return transaction;
-            }
-
-            throw new ArgumentException($"A transaction with an Id {transactionId} doesn't exist.");
+            _transactionStorage[id] = transaction;
+            return _transactionStorage[id];
         }
 
         public void Remove(int id)
         {
             if (_transactionStorage.ContainsKey(id))
             {
-                if (_transactionStorage[id].Committed)
-                {
-                    _transactionStorage[id].Deleted = true;
-                    _transactionStorage[id].Committed = false;
-                }
-                else
-                {
-                    _transactionStorage.Remove(id);
-                }
+                if (!_stagedIds.Contains(id))
+                    _stagedIds.Add(id);
+                
+                _deletedIds.Add(id);
+                return;
             }
-            else
-            {
-                throw new ArgumentException($"A transaction with and Id of {id} does not exist.");
-            }
+            
+            throw new ArgumentException($"A transaction with and Id of {id} does not exist.");
         }    
         
         public int Stage(Transaction transaction)
         {
-            int transactionId = GetNewId();
-            transaction.Id = transactionId;
-            transaction.Committed = false;
+            int id = GetNewId();
             
-            _transactionStorage.Add(transactionId, transaction);
+            var t = new Transaction(id, transaction.Date, transaction.Type, transaction.Amount, transaction.Note, transaction.Tags);
             
-            return transactionId;
-        }
-        
-        public void UnstageAll()
-        {
-            var stagedTransactions = _transactionStorage.Where(t => !t.Value.Committed && !t.Value.Deleted).Select(t => t.Key).ToArray();
-            var deletedTransactions = _transactionStorage.Where(t => !t.Value.Committed && t.Value.Deleted).Select(t => t.Value).ToArray();
-
-            foreach (var id in stagedTransactions)
-            {
-                _transactionStorage.Remove(id);
-            }
-
-            foreach (var t in deletedTransactions)
-            {
-                t.Deleted = false;
-                t.Committed = true;
-            }
+            _transactionStorage.Add(id, t);
+            _stagedIds.Add(id);
+            
+            return id;
         }
         
         public void CommitAll()
         {
-            var deletedTransactionIds = _transactionStorage.Where(t => !t.Value.Committed && t.Value.Deleted).Select(t => t.Key).ToArray();
-            foreach (var id in deletedTransactionIds)
-            {
+            foreach (var id in _deletedIds)
                 _transactionStorage.Remove(id);
-            }
 
             var transactionList = _transactionStorage.Values.OrderBy(t => t.Date).ToList();
 
@@ -116,7 +85,7 @@ namespace MoneylogLib.Providers
                 string storageFileContents = JsonConvert.SerializeObject(transactionList, Formatting.Indented);
                 File.WriteAllText(_storageFilePath, storageFileContents);
                 
-                MakeAllTransactionsCommitted();
+                ClearStaged();
             }
             catch (Exception e)
             {
@@ -138,7 +107,7 @@ namespace MoneylogLib.Providers
                         _transactionStorage.Add((int) transaction.Id, transaction);
                     }
 
-                    MakeAllTransactionsCommitted();
+                    ClearStaged();
                 }
                 else 
                 {
@@ -158,17 +127,11 @@ namespace MoneylogLib.Providers
             int lastId = _transactionStorage.Last().Key;
             return lastId + 1;
         }
-
-        private void MakeAllTransactionsCommitted()
-        {
-            foreach (var IdTransactionPair in _transactionStorage)
-            {
-                if (!IdTransactionPair.Value.Committed)
-                {
-                    IdTransactionPair.Value.Committed = true;
-                }
-            }
-        }
         
+        public void ClearStaged()
+        {
+            _stagedIds.Clear();
+            _deletedIds.Clear();
+        }
     }
 }
