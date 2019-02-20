@@ -51,9 +51,13 @@ namespace MoneylogLib.Providers
         {
             if (_transactionStorage.ContainsKey(id))
             {
-                if (!_stagedIds.Contains(id))
+                if (!_stagedIds.Contains(id)) {
                     _stagedIds.Add(id);
-                
+                }
+                else {
+                    _stagedIds.Remove(id);
+                }
+
                 _deletedIds.Add(id);
                 return;
             }
