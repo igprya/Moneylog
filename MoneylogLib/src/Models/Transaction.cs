@@ -39,7 +39,7 @@ namespace MoneylogLib.Models
 
         public override string ToString()
         {
-            return $"{Id}\t{Date}\t{Type}\t{Amount}\t{Note}\t{Tags}";
+            return $"{Id}\t{Date.ToShortDateString()}\t{Type}\t{Amount}\t{Note}\t{Tags}";
         }
     }
 }

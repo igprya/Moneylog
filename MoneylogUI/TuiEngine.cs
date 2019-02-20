@@ -274,7 +274,7 @@ namespace MoneylogUI
             Write("Enqueue now? [Y]: ");
             var input = ReadLine();
             
-            if (input.ToUpper() == "N")
+            if (input.ToUpper() != "Y")
             {
                 note = Read<string>("Note", dNote ?? "");
                 tags = Read<string>("Tags", dTags ?? "");
