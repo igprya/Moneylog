@@ -11,6 +11,8 @@ namespace MoneylogUI
 
     internal class TuiEngine
     {
+        private DateTime _lastDateTime = DateTime.Now;
+    
         private sealed class Transaction
         {
             public DateTime Timestamp;
@@ -265,13 +267,13 @@ namespace MoneylogUI
         private Transaction ReadTransaction(string dDate = null, string dAmount = null, string dType = null, string dTags = null,
             string dNote = null)
         {
-            var date = Read<DateTime>("Date", dDate ?? DateTime.Now.Date.ToString());
+            var date = Read<DateTime>("Date", dDate ?? _lastDateTime.ToString());
             var amount = Read<decimal>("Amount", dAmount ?? "0");
             var type = Read<TransactionType>("Type", dType ?? "Expense");
             string note = null;
             string tags = null;
 
-            Write("Enqueue now? [Y]: ");
+            Write("Enqueue now? [N]: ");
             var input = ReadLine();
             
             if (input.ToUpper() != "Y")
@@ -280,6 +282,8 @@ namespace MoneylogUI
                 tags = Read<string>("Tags", dTags ?? "");
             }
 
+            _lastDateTime = date;
+            
             return new Transaction
             {
                 Timestamp = date,
